@@ -43,7 +43,7 @@ import operator
 import bisect
 from pprint import pprint, pformat
 import logging
-from io import StringIO
+from cStringIO import StringIO
 import traceback
 from hashlib import md5
 import time
@@ -366,7 +366,7 @@ class Buffer(object):
             "do_eval" (optional, default False) indicates that completion
                 eval should be done.
         """
-        from io import StringIO
+        from cStringIO import StringIO
         html = StringIO()
 
         if include_html:
@@ -490,7 +490,7 @@ div.code .tags        { color: red; }
                 if do_trg:
                     try:
                         trg = self.trg_from_pos(token["start_index"] + i)
-                    except CodeIntelError as ex:
+                    except CodeIntelError, ex:
                         html.write(self._html_from_trg_error(ex))
                     else:
                         if trg is not None:
@@ -548,7 +548,7 @@ div.code .tags        { color: red; }
         except (EvalError, NotImplementedError,
                 # XXX Eventually citdl evaluation shouldn't use
                 #    codeintel2.CodeIntelError.
-                CodeIntelError) as ex:
+                CodeIntelError), ex:
             classes.append("trg-evalerror")
             result = _htmlescape(traceback.format_exc(), whitespace=True)
         else:
@@ -614,7 +614,7 @@ div.code .tags        { color: red; }
 
         # Get a style group from styles.py.
         if self.lang in styles.StateMap:
-            for style_group, const_names in list(styles.StateMap[self.lang].items()):
+            for style_group, const_names in styles.StateMap[self.lang].items():
                 if const_name in const_names:
                     style_names.append(style_group)
                     break

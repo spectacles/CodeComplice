@@ -48,7 +48,7 @@
 # Tools to build element trees from XML files.
 ##
 
-from . import ElementTree
+import ElementTree
 
 ##
 # (obsolete) ElementTree builder for XML source data, based on the

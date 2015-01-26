@@ -45,7 +45,7 @@ import logging
 from collections import defaultdict
 from glob import glob
 import threading
-from queue import Queue
+from Queue import Queue
 import warnings
 import traceback
 import codecs
@@ -284,7 +284,7 @@ class Manager(threading.Thread, Queue):
             log.debug("register `%s' support module", module_path)
             try:
                 module.register(self)
-            except CodeIntelError as ex:
+            except CodeIntelError, ex:
                 log.warn("error registering `%s' support module: %s",
                          module_path, ex)
             except:
@@ -373,7 +373,7 @@ class Manager(threading.Thread, Queue):
         return lang in self._is_cpln_from_lang
 
     def get_cpln_langs(self):
-        return list(self._is_cpln_from_lang.keys())
+        return self._is_cpln_from_lang.keys()
 
     def is_citadel_lang(self, lang):
         """Returns True if the given lang has been registered and
@@ -386,7 +386,7 @@ class Manager(threading.Thread, Queue):
         return lang in self._is_citadel_from_lang
 
     def get_citadel_langs(self):
-        return list(self._is_citadel_from_lang.keys())
+        return self._is_citadel_from_lang.keys()
 
     def langintel_from_lang(self, lang):
         if lang not in self._langintel_from_lang_cache:
@@ -546,10 +546,9 @@ class Manager(threading.Thread, Queue):
         log.exception("error evaluating %s" % eval_sess)
         eval_sess.ctlr.done("unexpected eval error")
 
-    def _put(self, xxx_todo_changeme):
+    def _put(self, (eval_sess, is_reeval)):
         # Only consider re-evaluation if we are still on the same eval
         # session.
-        (eval_sess, is_reeval) = xxx_todo_changeme
         if is_reeval and self._curr_eval_sess is not eval_sess:
             return
 

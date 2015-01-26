@@ -60,8 +60,8 @@ import string
 
 # import SilverCity
 from SilverCity import Ruby, ScintillaConstants
-from . import shared_lexer
-from .shared_lexer import EOF_STYLE
+import shared_lexer
+from shared_lexer import EOF_STYLE
 
 
 class RubyLexerClassifier:
@@ -135,7 +135,7 @@ class RubyMultiLangLexer(_CommonLexer):
     def _build_tokens(self, token_source):
         while True:
             try:
-                tok = next(token_source)
+                tok = token_source.next()
                 self._fix_token_list(tok)
             except StopIteration:
                 break

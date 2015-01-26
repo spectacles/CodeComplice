@@ -10,7 +10,6 @@ import logging
 from os.path import join
 from contextlib import contextmanager
 from codeintel2.common import *
-import collections
 
 #---- globals
 log = logging.getLogger("codeintel.db")
@@ -31,7 +30,9 @@ class LangDirsLibBase(object):
         # to report them (this also filters out quite a few spurious
         # notifications)
         dirs = frozenset(
-            [d for d in self.dirs if d not in self._have_ensured_scanned_from_dir_cache])
+            filter(
+                lambda d: d not in self._have_ensured_scanned_from_dir_cache,
+                self.dirs))
         if not dirs:
             # all directories have already been scanned; nothing to do.
             log.debug("Skipping scanning dirs %r - all scanned",
@@ -84,11 +85,11 @@ class LangDirsLibBase(object):
         if dir not in self._have_ensured_scanned_from_dir_cache:
             if reporter is None:
                 reporter = self.lang_zone.db.event_reporter
-            if not isinstance(reporter, collections.Callable):
+            if not callable(reporter):
                 reporter = None
             res_index = self.lang_zone.load_index(dir, "res_index", {})
             importables = self._importables_from_dir(dir)
-            importable_values = [i[0] for i in list(importables.values())
+            importable_values = [i[0] for i in importables.values()
                                  if i[0] is not None]
             for base in importable_values:
                 if ctlr and ctlr.is_aborted():
@@ -102,7 +103,7 @@ class LangDirsLibBase(object):
                     try:
                         buf = self.mgr.buf_from_path(join(dir, base),
                                                      lang=self.lang)
-                    except (EnvironmentError, CodeIntelError) as ex:
+                    except (EnvironmentError, CodeIntelError), ex:
                         # This can occur if the path does not exist, such as a
                         # broken symlink, or we don't have permission to read
                         # the file, or the file does not contain text.

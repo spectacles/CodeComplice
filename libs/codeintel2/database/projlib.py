@@ -48,6 +48,7 @@ import weakref
 
 from codeintel2.common import *
 
+
 #---- globals
 log = logging.getLogger("codeintel.db")
 

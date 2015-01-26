@@ -132,7 +132,7 @@ class EnvironmentBlock:
             self._as_parameter_ = None
         else:
             values = ["%s=%s" % (key, value)
-                      for (key, value) in dict.items()]
+                      for (key, value) in dict.iteritems()]
             values.append("")
             self._as_parameter_ = LPCWSTR("\0".join(values))
 

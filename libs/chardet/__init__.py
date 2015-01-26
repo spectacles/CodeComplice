@@ -18,7 +18,7 @@
 __version__ = "2.1.1"
 
 def detect(aBuf):
-    from . import universaldetector
+    import universaldetector
     u = universaldetector.UniversalDetector()
     u.reset()
     u.feed(aBuf)

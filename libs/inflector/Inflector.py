@@ -6,9 +6,8 @@
 # (BSD-style).
 
 import re
-from .Rules.English import English
-from .Rules.Spanish import Spanish
-import collections
+from Rules.English import English
+from Rules.Spanish import Spanish
 
 
 class Inflector:
@@ -20,8 +19,8 @@ class Inflector:
     """
 
     def __init__(self, Inflector=English):
-        assert isinstance(Inflector, collections.Callable), "Inflector should be a callable obj"
-        self.Inflector = Inflector()
+        assert callable(Inflector), "Inflector should be a callable obj"
+        self.Inflector = apply(Inflector)
 
     def pluralize(self, word):
         '''Pluralizes nouns.'''

@@ -37,9 +37,10 @@
 
 # import htmlentitydefs
 import re
+import string
 import sys
-import email
-import io
+import mimetools
+import StringIO
 from elementtree import ElementTree
 
 
@@ -174,15 +175,15 @@ class HTMLTreeBuilder(ElementTree.TreeBuilder):
             http_equiv = content = None
             for k, v in attrs:
                 if k == "http-equiv":
-                    http_equiv = v.lower()
+                    http_equiv = string.lower(v)
                 elif k == "content":
                     content = v
             if http_equiv == "content-type" and content:
-                # use email to parse the http header
-                header = email.message.Message(
-                    io.StringIO("%s: %s\n\n" % (http_equiv, content))
+                # use mimetools to parse the http header
+                header = mimetools.Message(
+                    StringIO.StringIO("%s: %s\n\n" % (http_equiv, content))
                 )
-                encoding = header.get_charset()
+                encoding = header.getparam("charset")
                 if encoding:
                     self.encoding = encoding
         l_tag = tag.lower()
@@ -266,9 +267,9 @@ class HTMLTreeBuilder(ElementTree.TreeBuilder):
         return self._last
 
     def data(self, data):
-        if isinstance(data, bytes) and is_not_ascii(data):
+        if isinstance(data, type('')) and is_not_ascii(data):
             # convert to unicode, but only if necessary
-            data = str(data, self.encoding, "ignore")
+            data = unicode(data, self.encoding, "ignore")
         ElementTree.TreeBuilder.data(self, data)
 
     def close(self):
@@ -413,11 +414,11 @@ if __name__ == "__main__":
         t1 = time.time()
         tree = HTML(data, ReParser)
         t2 = time.time()
-        print("RE parsing took %s" % (t2-t1))
+        print "RE parsing took %s" % (t2-t1)
         t1 = time.time()
         tree = HTML(data, SgmlopParser)
         t2 = time.time()
-        print("sgmlop parsing took %s" % (t2-t1))
+        print "sgmlop parsing took %s" % (t2-t1)
         sys.exit(0)
 
     data = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -432,7 +433,7 @@ if __name__ == "__main__":
 </body>
 </html>"""
     tree = HTML(data)
-    print(ElementTree.tostring(tree))
+    print ElementTree.tostring(tree)
     sys.exit(0)
 
     data = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
@@ -441,7 +442,7 @@ if __name__ == "__main__":
 <head>
 """
     tree = HTML(data)
-    print(ElementTree.tostring(tree))
+    print ElementTree.tostring(tree)
     sys.exit(0)
 
     data = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -650,7 +651,7 @@ function fadeTableRow(rowid, opts) {
 
 """
     tree = HTML(data)
-    print(ElementTree.tostring(tree))
+    print ElementTree.tostring(tree)
     p = Parser(HTMLTreeBuilder())
     p.feed(data)
     p.close()

@@ -167,9 +167,8 @@ class TclImportHandler(ImportHandler):
             compiler = which.which("tclsh")
         self.corePath = self._shellOutForPath(compiler)
 
-    def _findScannableFiles(self, xxx_todo_changeme,
+    def _findScannableFiles(self, (files, searchedDirs, skipRareImports),
                             dirname, names):
-        (files, searchedDirs, skipRareImports) = xxx_todo_changeme
         if sys.platform.startswith("win"):
             cpath = dirname.lower()
         else:

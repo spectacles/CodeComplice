@@ -58,13 +58,11 @@ hotshotProfilers = {}
 
 
 def isident(char):
-    char = ord(char)
-    return ord('a') <= char <= ord('z') or ord('A') <= char <= ord('Z') or char == ord('_')
+    return "a" <= char <= "z" or "A" <= char <= "Z" or char == "_"
 
 
 def isdigit(char):
-    char = ord(char)
-    return ord('0') <= char <= ord('9')
+    return "0" <= char <= "9"
 
 # A "safe" language name for the given language where safe generally
 # means safe for a file path.
@@ -255,7 +253,7 @@ def parsePyFuncDoc(doc, fallbackCallSig=None, scope="?", funcname="?"):
         return ([], [])
 
     limit = LINE_LIMIT
-    if not isinstance(doc, str):
+    if not isinstance(doc, unicode):
         # try to convert from utf8 to unicode; if we fail, too bad.
         try:
             doc = codecs.utf_8_decode(doc)[0]
@@ -355,7 +353,7 @@ def parsePyFuncDoc(doc, fallbackCallSig=None, scope="?", funcname="?"):
 #---- debugging utilities
 
 def unmark_text(markedup_text):
-    """Parse text with potential markup as follows and return
+    u"""Parse text with potential markup as follows and return
     (<text>, <data-dict>).
 
         "<|>" indicates the current position (pos), defaults to the end
@@ -388,7 +386,7 @@ def unmark_text(markedup_text):
     See the matching markup_text() below.
     """
     splitter = re.compile(r"(<(?:[\|\+\$\[\]<]|\d+)>)")
-    text = "" if isinstance(markup_text, str) else ""
+    text = u"" if isinstance(markup_text, unicode) else ""
     data = {}
     posNameFromSymbol = {
         "<|>": "pos",
@@ -399,7 +397,7 @@ def unmark_text(markedup_text):
     }
 
     def byte_length(text):
-        if isinstance(text, str):
+        if isinstance(text, unicode):
             return len(text.encode("utf-8"))
         return len(text)
 
@@ -433,16 +431,15 @@ def markup_text(text, pos=None, trg_pos=None, start_pos=None):
         positions_and_markers.append((start_pos, '<$>'))
     positions_and_markers.sort()
 
-    text = str(text).encode("utf-8")
-    m_text = b""
+    if not isinstance(text, bytes):
+        text = text.encode("utf-8")
+    m_text = ""
     m_pos = 0
     for position, marker in positions_and_markers:
-        if isinstance(marker, str):
-            marker = marker.encode("utf-8")
-        m_text += text[m_pos:position] + marker
+        m_text += text[m_pos:position].decode('utf-8', 'ignore') + marker
         m_pos = position
-    m_text += text[m_pos:]
-    return m_text.decode("utf-8")
+    m_text += text[m_pos:].decode('utf-8', 'ignore')
+    return m_text
 
 
 def lines_from_pos(unmarked_text, positions):
@@ -468,17 +465,17 @@ def lines_from_pos(unmarked_text, positions):
         >>> lines_from_pos(text, {"hello": 10, "moo": 20, "not": "an int"})
         {'moo': 1, 'hello': 1}
     """
-    lines = str(unmarked_text).splitlines(True)
+    lines = unicode(unmarked_text).splitlines(True)
     offsets = [0]
     for line in lines:
         offsets.append(offsets[-1] + len(line.encode("utf-8")))
     try:
         # assume a dict
-        keys = iter(positions.keys())
+        keys = positions.iterkeys()
         values = {}
     except AttributeError:
         # assume a list/tuple
-        keys = list(range(len(positions)))
+        keys = range(len(positions))
         values = []
 
     for key in keys:
@@ -519,19 +516,19 @@ def banner(text, ch='=', length=78):
     """
     if text is None:
         return ch * length
-    elif len(text) + 2 + len(ch) * 2 > length:
+    elif len(text) + 2 + len(ch)*2 > length:
         # Not enough space for even one line char (plus space) around text.
         return text
     else:
         remain = length - (len(text) + 2)
-        prefix_len = remain // 2
+        prefix_len = remain / 2
         suffix_len = remain - prefix_len
         if len(ch) == 1:
             prefix = ch * prefix_len
             suffix = ch * suffix_len
         else:
-            prefix = ch * (prefix_len // len(ch)) + ch[:prefix_len % len(ch)]
-            suffix = ch * (suffix_len // len(ch)) + ch[:suffix_len % len(ch)]
+            prefix = ch * (prefix_len/len(ch)) + ch[:prefix_len % len(ch)]
+            suffix = ch * (suffix_len/len(ch)) + ch[:suffix_len % len(ch)]
         return prefix + ' ' + text + ' ' + suffix
 
 
@@ -550,8 +547,8 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
     """
     DEBUG = False
     if DEBUG:
-        print("dedent: dedent(..., tabsize=%d, skip_first_line=%r)"\
-              % (tabsize, skip_first_line))
+        print "dedent: dedent(..., tabsize=%d, skip_first_line=%r)"\
+              % (tabsize, skip_first_line)
     indents = []
     margin = None
     for i, line in enumerate(lines):
@@ -570,13 +567,13 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
         else:
             continue  # skip all-whitespace lines
         if DEBUG:
-            print("dedent: indent=%d: %r" % (indent, line))
+            print "dedent: indent=%d: %r" % (indent, line)
         if margin is None:
             margin = indent
         else:
             margin = min(margin, indent)
     if DEBUG:
-        print("dedent: margin=%r" % margin)
+        print "dedent: margin=%r" % margin
 
     if margin is not None and margin > 0:
         for i, line in enumerate(lines):
@@ -590,7 +587,7 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
                     removed += tabsize - (removed % tabsize)
                 elif ch in '\r\n':
                     if DEBUG:
-                        print("dedent: %r: EOL -> strip up to EOL" % line)
+                        print "dedent: %r: EOL -> strip up to EOL" % line
                     lines[i] = lines[i][j:]
                     break
                 else:
@@ -598,8 +595,8 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
                                      "line %r while removing %d-space margin"
                                      % (ch, line, margin))
                 if DEBUG:
-                    print("dedent: %r: %r -> removed %d/%d"\
-                          % (line, ch, removed, margin))
+                    print "dedent: %r: %r -> removed %d/%d"\
+                          % (line, ch, removed, margin)
                 if removed == margin:
                     lines[i] = lines[i][j+1:]
                     break
@@ -665,7 +662,7 @@ def walk2(top, topdown=True, onerror=None, followlinks=False,
         # Note that listdir and error are globals in this module due
         # to earlier import-*.
         names = os.listdir(top)
-    except os.error as err:
+    except os.error, err:
         if onerror is not None:
             onerror(err)
         return
@@ -677,7 +674,7 @@ def walk2(top, topdown=True, onerror=None, followlinks=False,
                 dirs.append(name)
             else:
                 nondirs.append(name)
-        except UnicodeDecodeError as err:
+        except UnicodeDecodeError, err:
             if ondecodeerror is not None:
                 ondecodeerror(err)
 
@@ -713,7 +710,7 @@ def timeit(func):
             return func(*args, **kw)
         finally:
             total_time = clock() - start_time
-            print("%s took %.3fs" % (func.__name__, total_time))
+            print "%s took %.3fs" % (func.func_name, total_time)
     return wrapper
 
 
@@ -721,7 +718,7 @@ def hotshotit(func):
     def wrapper(*args, **kw):
         import hotshot
         global hotshotProfilers
-        prof_name = func.__name__+".prof"
+        prof_name = func.func_name+".prof"
         profiler = hotshotProfilers.get(prof_name)
         if profiler is None:
             profiler = hotshot.Profile(prof_name)
@@ -804,8 +801,8 @@ def make_short_name_dict(names, length=3):
             else:
                 l.append(name)
         # pprint(outdict)
-    for values in list(outdict.values()):
-        values.sort(key=OrdPunctLast)
+    for values in outdict.values():
+        values.sort(CompareNPunctLast)
     return outdict
 
 

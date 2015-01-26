@@ -1,4 +1,4 @@
-from . import ScintillaConstants
+import ScintillaConstants
 
 
 def list_states(state_prefix):

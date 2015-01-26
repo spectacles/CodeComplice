@@ -16,5 +16,5 @@ def get_default_stylesheet_location():
 
     return css_file
 
-from . import LanguageInfo
+import LanguageInfo
 LanguageInfo.do_registration()

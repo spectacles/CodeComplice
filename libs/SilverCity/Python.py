@@ -1,10 +1,10 @@
-from . import HTMLGenerator
-from . import Lexer
-from . import Keywords
+import HTMLGenerator
+import Lexer
+import Keywords
 from _SilverCity import find_lexer_module_by_id, PropertySet, WordList
-from .DispatchHandler import DispatchHandler
-from .ScintillaConstants import SCLEX_PYTHON
-from . import LanguageInfo
+from DispatchHandler import DispatchHandler
+from ScintillaConstants import SCLEX_PYTHON
+import LanguageInfo
 
 
 class PythonLexer(Lexer.Lexer):
@@ -62,7 +62,7 @@ class PythonHTMLGenerator(HTMLGenerator.SimpleHTMLGenerator, PythonHandler):
 
         lexer.tokenize_by_style(buffer, self.event_handler)
 
-from . import HyperText
+import HyperText
 
 
 class EmbeddedHyperTextHTMLGenerator(HyperText.HyperTextHTMLGenerator):
@@ -110,9 +110,9 @@ def looks_like_html(s):
 
 
 def guess_generator(s):
-    from . import HyperText
-    from . import XML
-    from . import XSLT
+    import HyperText
+    import XML
+    import XSLT
 
     if looks_like_markup(s):
         if looks_like_xsl(s):

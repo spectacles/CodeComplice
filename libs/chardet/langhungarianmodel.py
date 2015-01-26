@@ -25,7 +25,7 @@
 # 02110-1301  USA
 ######################### END LICENSE BLOCK #########################
 
-from . import constants
+import constants
 
 # 255: Control characters that usually does not exist in any text
 # 254: Carriage/Return
@@ -212,7 +212,7 @@ Latin2HungarianModel = { \
   'charToOrderMap': Latin2_HungarianCharToOrderMap,
   'precedenceMatrix': HungarianLangModel,
   'mTypicalPositiveRatio': 0.947368,
-  'keepEnglishLetter': True,
+  'keepEnglishLetter': constants.True,
   'charsetName': "ISO-8859-2"
 }
 
@@ -220,6 +220,6 @@ Win1250HungarianModel = { \
   'charToOrderMap': win1250HungarianCharToOrderMap,
   'precedenceMatrix': HungarianLangModel,
   'mTypicalPositiveRatio': 0.947368,
-  'keepEnglishLetter': True,
+  'keepEnglishLetter': constants.True,
   'charsetName': "windows-1250"
 }

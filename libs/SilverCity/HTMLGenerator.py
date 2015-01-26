@@ -1,5 +1,5 @@
-from . import ScintillaConstants
-from . import Utils
+import ScintillaConstants
+import Utils
 
 
 def replace(text, *replacements):

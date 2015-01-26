@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ***** BEGIN LICENSE BLOCK *****
 # Version: MPL 1.1/GPL 2.0/LGPL 2.1
 #
@@ -61,6 +62,7 @@ Configuration files (`~/.codeintel/config' or `project_root/.codeintel/config').
         }
     }
 """
+from __future__ import print_function, unicode_literals
 
 VERSION = "1.0.0"
 
@@ -539,6 +541,9 @@ def autocomplete(view, timeout, busy_timeout, forms, preemptive=False, args=[], 
                         "python3-complete-module-members",
                         "python3-complete-object-members",
                         "python3-complete-available-imports",
+                        "python-complete-module-members",
+                        "python-complete-object-members",
+                        "python-complete-available-imports",
                         "javascript-complete-object-members"
                     ]
                     if cplns is not None and trigger.name in api_cplns_only_trigger:
@@ -1183,7 +1188,9 @@ class WordCompletionsFromBuffer():
         return fixed_words
 
     def is_empty_match(self, match):
-        return match.empty()
+        if match:
+            return match.empty()
+        return True
 
 #make sure all settings could be loaded and sublime is ready
 def codeintel_enabled(default=False):
@@ -1388,7 +1395,9 @@ class SettingsManager():
                     found = False
                     for folder in folders:
                         folder_path = re.sub(r'^/([^/])/', '\\1:/', folder['path'])
-                        if folder_path == directory.replace('\\', '/'):
+                        if not os.path.isabs(folder_path):
+                            folder_path = "~/"+folder_path
+                        if os.path.realpath(os.path.expanduser(folder_path)) == directory.replace('\\', '/'):
                             found = True
                             break
                     if not found:
@@ -1442,29 +1451,32 @@ class PythonCodeIntel(sublime_plugin.EventListener):
         #possibly the project was changed
         #or the project-settings were changed!
         #give small timeout so SublimeText can adjust
-        sublime.set_timeout(settings_manager.checkProjectFileChanged, 100)
+        if codeintel_enabled():
+            sublime.set_timeout(settings_manager.checkProjectFileChanged, 100)
 
     #rescan a buffer on_pre_save, if it is dirty
     def on_pre_save(self, view):
-        if view.is_dirty():
-            try:
-                lang = guess_lang(view)
-                if not lang or lang.lower() not in [l.lower() for l in settings_manager.get('codeintel_enabled_languages', [])]:
-                    return
-                mgr = codeintel_manager()
-                env = _ci_envs_[view.id()]
-            except KeyError:
-                mgr = codeintel_manager()
-                folders = getattr(view.window(), 'folders', lambda: [])()
-                env = generateEnvironment(mgr, lang, folders)
+        settings_manager.update()
+        if codeintel_enabled():
+            if view.is_dirty():
+                try:
+                    lang = guess_lang(view)
+                    if not lang or lang.lower() not in [l.lower() for l in settings_manager.get('codeintel_enabled_languages', [])]:
+                        return
+                    mgr = codeintel_manager()
+                    env = _ci_envs_[view.id()]
+                except KeyError:
+                    mgr = codeintel_manager()
+                    folders = getattr(view.window(), 'folders', lambda: [])()
+                    env = generateEnvironment(mgr, lang, folders)
 
-            path = view.file_name()
-            mtime = None
+                path = view.file_name()
+                mtime = None
 
-            content = view.substr(sublime.Region(0, view.size()))
+                content = view.substr(sublime.Region(0, view.size()))
 
-            buf = mgr.buf_from_content(content, lang, env, path or "<Unsaved>", 'utf-8')
-            buf.scan(mtime=mtime, skip_scan_time_check=True)
+                buf = mgr.buf_from_content(content, lang, env, path or "<Unsaved>", 'utf-8')
+                buf.scan(mtime=mtime, skip_scan_time_check=True)
 
     def on_close(self, view):
         vid = view.id()
@@ -1699,7 +1711,6 @@ class GotoPythonDefinition(sublime_plugin.TextCommand):
 
 class BackToPythonDefinition(sublime_plugin.TextCommand):
     def run(self, edit, block=False):
-
         window = sublime.active_window()
         if window.id() in jump_history_by_window:
             jump_history = jump_history_by_window[window.id()]
@@ -1746,7 +1757,11 @@ class SublimecodeintelDumpImportDirs(sublime_plugin.WindowCommand):
                         pass
 
                 stat_file = open(os.path.join(stat_dir, lang), "w")
-                for item in sorted(import_dirs, key=str.lower):
+
+                def sort_key(it):
+                    return it.lower()
+
+                for item in sorted(import_dirs, key=sort_key):
                     import_dir = item.split("$")
                     stat_file.write("%s %s\n" % (import_dir[1], import_dir[0]) )
 

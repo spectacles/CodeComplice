@@ -148,7 +148,7 @@ def main(argv):
         opts, args = getopt.getopt(argv[1:], "Vvhf:cL:",
                                    ["version", "verbose", "help", "filename=", "md5=", "mtime=",
                                     "clock", "language="])
-    except getopt.GetoptError as ex:
+    except getopt.GetoptError, ex:
         log.error(str(ex))
         log.error("Try `tclcile --help'.")
         return 1
@@ -164,16 +164,14 @@ def main(argv):
             return
         elif opt in ("-V", "--version"):
             ver = '.'.join([str(part) for part in _version_])
-            print("tclcile %s" % ver)
+            print "tclcile %s" % ver
             return
         elif opt in ("-v", "--verbose"):
             numVerboses += 1
             if numVerboses == 1:
-                #log.setLevel(logging.INFO)
-                pass
+                log.setLevel(logging.INFO)
             else:
-                #log.setLevel(logging.DEBUG)
-                pass
+                log.setLevel(logging.DEBUG)
         elif opt in ("-f", "--filename"):
             stdinFilename = optarg
         elif opt in ("-L", "--language"):
@@ -236,7 +234,7 @@ def main(argv):
     if 0:  # except Exception, ex:
         log.error(str(ex))
         if log.isEnabledFor(logging.DEBUG):
-            print()
+            print
             import traceback
             traceback.print_exception(*sys.exc_info())
         return 1

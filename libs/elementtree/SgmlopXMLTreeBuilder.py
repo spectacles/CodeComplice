@@ -53,7 +53,7 @@
 # <a href='http://effbot.org/downloads'>http://effbot.org/downloads</a>).
 ##
 
-from . import ElementTree
+import ElementTree
 
 ##
 # ElementTree builder for XML source data, based on the SGMLOP parser.
@@ -70,8 +70,8 @@ class TreeBuilder:
             raise RuntimeError("sgmlop parser not available")
         self.__builder = ElementTree.TreeBuilder()
         if html:
-            import html.entities
-            self.entitydefs.update(html.entities.entitydefs)
+            import htmlentitydefs
+            self.entitydefs.update(htmlentitydefs.entitydefs)
         self.__parser = sgmlop.XMLParser()
         self.__parser.register(self)
 
