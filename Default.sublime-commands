@@ -1,0 +1,6 @@
+[
+    {
+        "caption": "CodeComplice: Dump Import Directories",
+        "command": "sublimecodeintel_dump_import_dirs"
+    }
+]
