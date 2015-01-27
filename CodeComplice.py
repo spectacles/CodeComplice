@@ -538,12 +538,12 @@ def autocomplete(view, timeout, busy_timeout, forms, preemptive=False, args=[], 
                     api_cplns_only_trigger = [
                         "php-complete-static-members",
                         "php-complete-object-members",
-                        "python3-complete-module-members",
-                        "python3-complete-object-members",
-                        "python3-complete-available-imports",
                         "python-complete-module-members",
                         "python-complete-object-members",
                         "python-complete-available-imports",
+                        "python3-complete-module-members",
+                        "python3-complete-object-members",
+                        "python3-complete-available-imports",
                         "javascript-complete-object-members"
                     ]
                     if cplns is not None and trigger.name in api_cplns_only_trigger:
@@ -798,7 +798,7 @@ def codeintel_scan(view, path, content, lang, callback=None, pos=None, forms=Non
             return
     logger(view, 'info', "processing `%s': please wait..." % lang)
     is_scratch = view.is_scratch()
-    is_dirty = view.is_dirty()
+    #is_dirty = view.is_dirty()
     vid = view.id()
     folders = getattr(view.window(), 'folders', lambda: [])()  # FIXME: it's like this for backward compatibility (<= 2060)
 
@@ -806,7 +806,7 @@ def codeintel_scan(view, path, content, lang, callback=None, pos=None, forms=Non
     def _codeintel_scan():
         global despair, despaired
         env = None
-        mtime = None
+        #mtime = None
 
         now = time.time()
 
@@ -916,7 +916,8 @@ def codeintel(view, path, content, lang, pos, forms, callback=None, timeout=7000
             trg = get_trg('preceding_trg_from_pos', bpos, bpos)
         elif 'calltips' in forms:
             trg = get_trg('trg_from_pos', bpos)
-        defn_trg = get_trg('defn_trg_from_pos', bpos) if 'defns' in forms else None
+        elif 'defns' in forms:
+            trg = get_trg('defn_trg_from_pos', bpos)
 
         eval_log_stream = StringIO()
         _hdlrs = codeintel_log.handlers
@@ -929,8 +930,8 @@ def codeintel(view, path, content, lang, pos, forms, callback=None, timeout=7000
                 cplns = buf.cplns_from_trg(trg, ctlr=ctlr, timeout=20)
             if 'calltips' in forms and trg and trg.form == TRG_FORM_CALLTIP:
                 calltips = buf.calltips_from_trg(trg, ctlr=ctlr, timeout=20)
-            if 'defns' in forms and defn_trg and defn_trg.form == TRG_FORM_DEFN:
-                defns = buf.defns_from_trg(defn_trg, ctlr=ctlr, timeout=20)
+            if 'defns' in forms and trg and trg.form == TRG_FORM_DEFN:
+                defns = buf.defns_from_trg(trg, ctlr=ctlr, timeout=20)
         except EvalTimeout:
             logger(view, 'info', "Timeout while resolving completions!")
         finally:
@@ -960,10 +961,9 @@ def codeintel(view, path, content, lang, pos, forms, callback=None, timeout=7000
 
 
         ret = {
-            "trigger":trg,
+            "trigger": trg,
             "citdl_expr": citdl_expr
         }
-
 
         for f in forms:
             if f == 'cplns':
@@ -1072,12 +1072,6 @@ def find_back(start_at, look_for):
         if continue_at == start_at or continue_at == root:
             return None
         start_at = continue_at
-
-
-
-
-
-
 
 
 def _get_git_revision(path):
@@ -1413,7 +1407,7 @@ settings_manager = SettingsManager()
 
 def format_completions_by_language(cplns, language, text_in_current_line, trigger):
     function = None if 'import ' in text_in_current_line else 'function'
-    if language == "PHP" and not trigger or trigger.name != "php-complete-object-members":
+    if language == "PHP" and (not trigger or trigger.name != "php-complete-object-members"):
             #add dollar sign to variables!
             return [('%s〔%s〕' % (('$' if t == 'variable' else '')+n, t), (('$' if t == 'variable' else '')+n).replace("$","\\$") + ('($0)' if t == function else '')) for t, n in cplns]
     else:
