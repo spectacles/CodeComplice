@@ -7,15 +7,15 @@
             "releases": [
                 {
                     "sublime_text": "<3000",
-                    "version": "1.0.0",
-                    "url": "https://github.com/spectacles/CodeComplice/archive/v1.0.0+st2.zip",
-                    "date": "2015-01-26 00:00:00"
+                    "version": "1.0.1",
+                    "url": "https://github.com/spectacles/CodeComplice/archive/v1.0.1+st2.zip",
+                    "date": "2015-01-27 00:00:00"
                 },
                 {
                     "sublime_text": ">=3000",
-                    "version": "1.0.0",
-                    "url": "https://github.com/spectacles/CodeComplice/archive/1.0.0.zip",
-                    "date": "2015-01-26 00:00:00"
+                    "version": "1.0.1",
+                    "url": "https://github.com/spectacles/CodeComplice/archive/1.0.1.zip",
+                    "date": "2015-01-27 00:00:00"
                 }
             ]
         }
