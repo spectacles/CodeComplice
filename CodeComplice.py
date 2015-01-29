@@ -1401,7 +1401,7 @@ settings_manager = SettingsManager()
 
 def format_completions_by_language(cplns, language, text_in_current_line, trigger):
     function = None if 'import ' in text_in_current_line else 'function'
-    if language == "PHP" and (not trigger or trigger.name != "php-complete-object-members"):
+    if language == "PHP" and (trigger and trigger.name == "php-complete-variables")::
             #add dollar sign to variables!
             return [('%s〔%s〕' % (('$' if t == 'variable' else '')+n, t), (('$' if t == 'variable' else '')+n).replace("$","\\$") + ('($0)' if t == function else '')) for t, n in cplns]
     else:
