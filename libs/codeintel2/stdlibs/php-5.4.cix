@@ -5588,38 +5588,50 @@
       <variable citdl="array" name="_GET" />
       <variable citdl="array" name="_POST" />
       <variable citdl="array" name="_REQUEST" />
-      <variable name="_SERVER" citdl="array">
-        <variable name="HTTP_HOST" citdl="string"/>
-        <variable name="HTTP_USER_AGENT" citdl="string"/>
-        <variable name="HTTP_ACCEPT" citdl="string"/>
-        <variable name="HTTP_ACCEPT_LANGUAGE" citdl="string"/>
-        <variable name="HTTP_ACCEPT_ENCODING" citdl="string"/>
-        <variable name="HTTP_ACCEPT_CHARSET" citdl="string"/>
-        <variable name="HTTP_KEEP_ALIVE" citdl="string"/>
-        <variable name="HTTP_CONNECTION" citdl="string"/>
-        <variable name="HTTP_COOKIE" citdl="string"/>
-        <variable name="HTTP_CACHE_CONTROL" citdl="string"/>
-        <variable name="PATH" citdl="string"/>
-        <variable name="SERVER_SIGNATURE" citdl="string"/>
-        <variable name="SERVER_SOFTWARE" citdl="string"/>
-        <variable name="SERVER_NAME" citdl="string"/>
-        <variable name="SERVER_ADDR" citdl="string"/>
-        <variable name="SERVER_PORT" citdl="string"/>
-        <variable name="REMOTE_ADDR" citdl="string"/>
-        <variable name="DOCUMENT_ROOT" citdl="string"/>
-        <variable name="SERVER_ADMIN" citdl="string"/>
-        <variable name="SCRIPT_FILENAME" citdl="string"/>
-        <variable name="REMOTE_PORT" citdl="string"/>
-        <variable name="GATEWAY_INTERFACE" citdl="string"/>
-        <variable name="SERVER_PROTOCOL" citdl="string"/>
-        <variable name="REQUEST_METHOD" citdl="string"/>
-        <variable name="QUERY_STRING" citdl="string"/>
-        <variable name="REQUEST_URI" citdl="string"/>
-        <variable name="SCRIPT_NAME" citdl="string"/>
-        <variable name="PHP_SELF" citdl="string"/>
-        <variable name="REQUEST_TIME" citdl="string"/>
-        <variable name="argv" citdl="string"/>
-        <variable name="argc" citdl="string"/>
+      <variable citdl="array" name="_SERVER">
+        <variable citdl="string" name="argc" />
+        <variable citdl="string" name="argv" />
+        <variable citdl="string" name="AUTH_TYPE" />
+        <variable citdl="string" name="DOCUMENT_ROOT" />
+        <variable citdl="string" name="GATEWAY_INTERFACE" />
+        <variable citdl="string" name="HTTP_ACCEPT" />
+        <variable citdl="string" name="HTTP_ACCEPT_CHARSET" />
+        <variable citdl="string" name="HTTP_ACCEPT_ENCODING" />
+        <variable citdl="string" name="HTTP_ACCEPT_LANGUAGE" />
+        <variable citdl="string" name="HTTP_CACHE_CONTROL" />
+        <variable citdl="string" name="HTTP_CONNECTION" />
+        <variable citdl="string" name="HTTP_COOKIE" />
+        <variable citdl="string" name="HTTP_HOST" />
+        <variable citdl="string" name="HTTP_KEEP_ALIVE" />
+        <variable citdl="string" name="HTTP_REFERER" />
+        <variable citdl="string" name="HTTP_USER_AGENT" />
+        <variable citdl="string" name="HTTPS" />
+        <variable citdl="string" name="ORIG_PATH_INFO" />
+        <variable citdl="string" name="PATH" />
+        <variable citdl="string" name="PATH_INFO" />
+        <variable citdl="string" name="PATH_TRANSLATED" />
+        <variable citdl="string" name="PHP_AUTH_DIGEST" />
+        <variable citdl="string" name="PHP_AUTH_PW" />
+        <variable citdl="string" name="PHP_AUTH_USER" />
+        <variable citdl="string" name="PHP_SELF" />
+        <variable citdl="string" name="QUERY_STRING" />
+        <variable citdl="string" name="REDIRECT_REMOTE_USER" />
+        <variable citdl="string" name="REMOTE_ADDR" />
+        <variable citdl="string" name="REMOTE_HOST" />
+        <variable citdl="string" name="REMOTE_PORT" />
+        <variable citdl="string" name="REQUEST_METHOD" />
+        <variable citdl="string" name="REQUEST_TIME" />
+        <variable citdl="string" name="REQUEST_TIME_FLOAT" />
+        <variable citdl="string" name="REQUEST_URI" />
+        <variable citdl="string" name="SCRIPT_FILENAME" />
+        <variable citdl="string" name="SCRIPT_NAME" />
+        <variable citdl="string" name="SERVER_ADDR" />
+        <variable citdl="string" name="SERVER_ADMIN" />
+        <variable citdl="string" name="SERVER_NAME" />
+        <variable citdl="string" name="SERVER_PORT" />
+        <variable citdl="string" name="SERVER_PROTOCOL" />
+        <variable citdl="string" name="SERVER_SIGNATURE" />
+        <variable citdl="string" name="SERVER_SOFTWARE" />
       </variable>
       <variable citdl="array" name="_SESSION" />
       <variable citdl="array" name="HTTP_COOKIE_VARS" />
