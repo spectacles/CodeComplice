@@ -1520,6 +1520,9 @@ class PythonCodeIntel(sublime_plugin.EventListener):
 
         current_char = current_command[1]['characters'][-1]
 
+        if current_char in ["\n"]:
+            return
+
         is_fill_char = (current_char and current_char in cpln_fillup_chars.get(lang, ''))
         is_stop_char = (current_char and current_char in cpln_stop_chars.get(lang, ''))
 
