@@ -4768,9 +4768,11 @@
       <variable citdl="array" name="GLOBALS" />
       <variable citdl="string" ilk="constant" name="__LINE__" />
       <variable citdl="string" ilk="constant" name="__FILE__" />
+      <variable citdl="string" ilk="constant" name="__DIR__" />
       <variable citdl="string" ilk="constant" name="__FUNCTION__" />
       <variable citdl="string" ilk="constant" name="__CLASS__" />
       <variable citdl="string" ilk="constant" name="__METHOD__" />
+      <variable citdl="string" ilk="constant" name="__NAMESPACE__" />
       <variable citdl="array" name="_SERVER">
         <variable citdl="string" name="argc" />
         <variable citdl="string" name="argv" />
