@@ -238,6 +238,8 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
                         return self._functionCalltipTrigger(ac, prev_pos, DEBUG)
                     elif text == "namespace":
                         return Trigger(lang, TRG_FORM_CPLN, "use-global-namespaces", pos, implicit)
+                    elif text == "function":
+                        return Trigger(lang, TRG_FORM_CPLN, "interface-methods", pos, implicit)
             elif last_style == self.operator_style:
                 if DEBUG:
                     print("  lang_style is operator style")
