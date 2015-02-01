@@ -865,7 +865,6 @@ def codeintel_scan(view, path, content, lang, callback=None, pos=None, forms=Non
                         buf.scan()  # FIXME: Always scanning unsaved files (since many tabs can have unsaved files, or find other path as ID)
                     else:
                         if is_dirty:
-                            sublime.message_dialog("DIRTY")
                             mtime = 1
                         buf.scan(mtime=mtime, skip_scan_time_check=is_dirty)
                     #    buf.scan(mtime=mtime, skip_scan_time_check=False)
