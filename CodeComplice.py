@@ -142,12 +142,12 @@ for logger in ('citadel', 'css', 'django', 'html', 'html5', 'javascript', 'mason
 #no live completions for these
 cpln_stop_chars = {
     'CSS': " ('\";{},.>/",
-    'JavaScript': "~`!@#%^&*()-=+{}[]|\\;:'\",<>?/ ",
-    'Perl': "-~`!@#$%^&*()=+{}[]|\\;:'\",.<>?/ ",
+    'JavaScript': "~`!@#%^&*()-=+{}[]|\\;:'\",<>?/",
+    'Perl': "-~`!@#$%^&*()=+{}[]|\\;:'\",.<>?/",
     'PHP': "~`@%^&*()=+{}]|;'\",.<?/",
     'Python': "~`!@#$%^&*()-=+{}[]|\\;:'\",<>?/",
     'Python3': "~`!@#$%^&*()-=+{}[]|\\;:'\",<>?/",
-    'Ruby': "~`@#$%^&*(+}[]|\\;:,<>/ '\"."
+    'Ruby': "~`@#$%^&*(+}[]|\\;:,<>/'\"."
 }
 
 #don't fast-trigger word completions on these
@@ -1540,7 +1540,7 @@ class PythonCodeIntel(sublime_plugin.EventListener):
         #cancel on cpln_stop_chars per language
         if is_stop_char:
             view.run_command('hide_auto_complete')
-            #return
+            return
         if current_char == ",":
             forms = ('calltips',)
             caller = "other"
