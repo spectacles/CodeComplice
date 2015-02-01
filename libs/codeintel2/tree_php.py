@@ -266,11 +266,17 @@ class PHPTreeEvaluator(TreeEvaluator):
         elif trg.type == "interface-methods":
             elem = self._elem_from_scoperef(start_scope)
             if elem.get("ilk") == "class":
-                interface_methods = []
-                impltInterfaces = elem.get("interfacerefs").split(" ")
-                for interface_name in impltInterfaces:
-                    interface_methods += self._interface_method_names_from_scope(interface_name, start_scope)
-                return interface_methods
+                interfacerefs = elem.get("interfacerefs", "").split()
+                #name = node.get("name")
+                interface_method_names = []
+                for interface in interfacerefs:
+                    ielem, iscoperef = self._hit_from_citdl(
+                        interface, start_scope)
+                    if ielem is not None:
+                        for child in ielem.getchildren():
+                            if child.get("ilk") == "function":
+                                interface_method_names.append( ("interface", child.get("signature") ) )
+                return interface_method_names
 
         elif trg.type == "magic-methods":
             elem = self._elem_from_scoperef(start_scope)
@@ -369,21 +375,6 @@ class PHPTreeEvaluator(TreeEvaluator):
                 return []
             return [php_magic_global_method_data[expr]]
 
-        #check for implemented interfaces methods, if in class
-        elem = self._elem_from_scoperef(start_scope)
-        if elem.get("ilk") == "class":
-            all_interface_hits = []
-
-            implt_interfaces = elem.get("interfacerefs").split(" ")
-            for interface_name in implt_interfaces:
-                all_interface_hits += self._interface_hits_from_scope(interface_name, start_scope)
-
-                for interface_hits in all_interface_hits:
-                    interface_hit = interface_hits[0]
-                    for child in interface_hit[0].getchildren():
-                        if child.get("ilk") == "function" and child.get("name") == expr:
-                            return self._calltips_from_hit( (child, interface_hit[1] ) )
-
         hit = self._hit_from_citdl(expr, start_scope)
         return self._calltips_from_hit(hit)
 
@@ -478,85 +469,6 @@ class PHPTreeEvaluator(TreeEvaluator):
                     elem_type, scope_type, names)
                 all_names.update(names)
         return self._convertListToCitdl(elem_type, all_names)
-
-    def _elements_from_scope_starting_with_expr(self, expr, scoperef,
-                                                     elem_type, scope_names,
-                                                     elem_retriever):
-        """Return all available elem_type names beginning with expr"""
-        self.log(
-            "%s_names_from_scope_starting_with_expr:: expr: %r, scoperef: %r for %r",
-            elem_type, expr, scoperef, scope_names)
-        global_blob = self._elem_from_scoperef(
-            self._get_global_scoperef(scoperef))
-        # Get all of the imports
-
-        # Start making the list of names
-        all_names = set()
-        return_elems = []
-        for scope_type in scope_names:
-            elemlist = []
-            if scope_type == "locals":
-                elemlist = [self._elem_from_scoperef(scoperef)]
-            elif scope_type == "globals":
-                elemlist = [global_blob]
-            elif scope_type == "namespace":
-                elemlist = []
-                namespace = self._namespace_elem_from_scoperef(scoperef)
-                if namespace is not None:
-                    elemlist.append(namespace)
-                    # Note: This namespace may occur across multiple files, so we
-                    # iterate over all known libs that use this namespace.
-                    fqn = namespace.get("name")
-                    lpath = (fqn, )
-                    for lib in self.libs:
-                        hits = lib.hits_from_lpath(lpath, self.ctlr,
-                                                   curr_buf=self.buf)
-                        elemlist += [elem for elem, scoperef in hits]
-            elif scope_type == "builtins":
-                lib = self.buf.stdlib
-                # Find the matching names (or all names if no expr)
-                # log.debug("Include builtins: elem_type: %s", elem_type)
-                names = lib.toplevel_cplns(prefix=expr, ilk=elem_type)
-                all_names.update([n for ilk, n in names])
-            # "Include everything" includes the builtins already
-            elif scope_type == "imports":
-                # Iterate over all known libs
-                for lib in self.libs:
-                    # Find the matching names (or all names if no expr)
-                    # log.debug("Include everything: elem_type: %s", elem_type)
-
-                    # all names that match the first three chars
-                    names = lib.toplevel_cplns(prefix=expr, ilk=elem_type)
-
-                    for name in names:
-                        hits = lib.hits_from_lpath((name[1], ))
-                        #for each name only the first match for now
-                        hit = hits
-                        return_elems.append(hit)
-
-
-                    all_names.update([n for ilk, n in names])
-                # Standard imports, specified through normal import semantics
-                elemlist = self._get_all_import_blobs_for_elem(global_blob)
-
-            for elem in elemlist:
-                names = elem_retriever(elem)
-                if expr:
-                    if isinstance(names, dict):
-                        try:
-                            names = names[expr]
-                        except KeyError:
-                            # Nothing in the dict matches, thats okay
-                            names = []
-                    else:
-                        # Iterate over the names and keep the ones containing
-                        # the given prefix.
-                        names = [x for x in names if x.startswith(expr)]
-                self.log(
-                    "%s_names_from_scope_starting_with_expr:: adding %s: %r",
-                    elem_type, scope_type, names)
-                all_names.update(names)
-        return return_elems
 
     def _variables_from_scope(self, expr, scoperef):
         """Return all available variable names beginning with expr"""
@@ -1862,30 +1774,3 @@ class PHPTreeEvaluator(TreeEvaluator):
             interface_names = [x.get("name") for x in interfaces]
             cache[cache_item_name] = interface_names
         return interface_names
-
-    def _interface_method_names_from_scope(self, interface_name, scoperef):
-        interface_method_names = []
-
-        interface_hits = self._interface_hits_from_scope(interface_name, scoperef)
-
-        #we expect only one hit per Interface
-        interface_elem = interface_hits[0][0][0]
-
-        for child in interface_elem.getchildren():
-            if child.get("ilk") == "function":
-                interface_method_names.append( ("function", child.get("name") ) )
-
-        return interface_method_names
-
-
-    def _interface_hits_from_scope(self, interface_name, scoperef):
-        """Return all available interface names beginning with expr"""
-        # Need to work from the global scope for this one
-
-        interface_hits = self._elements_from_scope_starting_with_expr(interface_name[0:3],
-                        scoperef,
-                        "interface",
-                        ("namespace", "globals", "imports",),
-                        self.interface_names_from_elem)
-
-        return interface_hits
