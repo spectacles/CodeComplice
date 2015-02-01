@@ -1373,7 +1373,7 @@ class SettingsManager():
         else:
             data = data.decode('utf-8').replace('\t', ' ')
             data = json.loads(data, strict=False)
-            if hasattr(data, 'workspaces') and hasattr(data['workspaces'], 'recent_workspaces') and data['workspaces']['recent_workspaces']:
+            if data.has_key('workspaces') and data['workspaces'].has_key('recent_workspaces') and data['workspaces']['recent_workspaces']:
                 projects += data['workspaces']['recent_workspaces']
             projects = list(set(projects))
         for project_file in projects:
