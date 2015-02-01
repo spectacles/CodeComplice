@@ -262,6 +262,22 @@ class PHPTreeEvaluator(TreeEvaluator):
         elif trg.type == "interfaces":
             return self._interfaces_from_scope(self.expr, start_scope) + \
                 self._imported_namespaces_from_scope(self.expr, start_scope)
+
+        elif trg.type == "interface-methods":
+            elem = self._elem_from_scoperef(start_scope)
+            if elem.get("ilk") == "class":
+                interfacerefs = elem.get("interfacerefs", "").split()
+                #name = node.get("name")
+                interface_method_names = []
+                for interface in interfacerefs:
+                    ielem, iscoperef = self._hit_from_citdl(
+                        interface, start_scope)
+                    if ielem is not None:
+                        for child in ielem.getchildren():
+                            if child.get("ilk") == "function":
+                                interface_method_names.append( ("interface", child.get("signature") ) )
+                return interface_method_names
+
         elif trg.type == "magic-methods":
             elem = self._elem_from_scoperef(start_scope)
             if elem.get("ilk") == "function":
