@@ -261,9 +261,9 @@ def tooltip(view, calltips, text_in_current_line, original_pos, lang, caller):
                         var = var.strip()
                         if ' ' in var:
                             var = var.split(' ')[1]
-                        if var[0] == '$':
+                        if var[0] == '$' and lang != "PHP":
                             var = var[1:]
-                        snippet.append('${%s:%s}' % (n, var))
+                        snippet.append('${%s:%s}' % (n, var.replace('$', '\\$')))
                         n += 1
                 if caller == "instant_snippet" and not arguments == 0:
                     if snippet:
