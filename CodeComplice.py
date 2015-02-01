@@ -798,7 +798,7 @@ def codeintel_scan(view, path, content, lang, callback=None, pos=None, forms=Non
             return
     logger(view, 'info', "processing `%s': please wait..." % lang)
     is_scratch = view.is_scratch()
-    #is_dirty = view.is_dirty()
+    is_dirty = view.is_dirty()
     vid = view.id()
     folders = getattr(view.window(), 'folders', lambda: [])()  # FIXME: it's like this for backward compatibility (<= 2060)
 
@@ -857,7 +857,7 @@ def codeintel_scan(view, path, content, lang, callback=None, pos=None, forms=Non
             if mgr.is_citadel_lang(lang):
                 now = datetime.datetime.now()
                 if not _ci_next_scan_.get(vid) or now > _ci_next_scan_[vid]:
-                    _ci_next_scan_[vid] = now + datetime.timedelta(seconds=10)
+                    _ci_next_scan_[vid] = now + datetime.timedelta(seconds=2)
                     despair = 0
                     despaired = False
                     msg = "Updating indexes for '%s'... The first time this can take a while." % lang
@@ -865,13 +865,15 @@ def codeintel_scan(view, path, content, lang, callback=None, pos=None, forms=Non
                     logger(view, 'info', msg, timeout=20000, delay=1000)
                     if not path or is_scratch:
                         buf.scan()  # FIXME: Always scanning unsaved files (since many tabs can have unsaved files, or find other path as ID)
-                    #else:
+                    else:
+                        if is_dirty:
+                            sublime.message_dialog("DIRTY")
+                            mtime = 1
+                        buf.scan(mtime=mtime, skip_scan_time_check=is_dirty)
                     #    buf.scan(mtime=mtime, skip_scan_time_check=False)
-                    #    #if is_dirty:
-                    #    #    mtime = 1
                     #    #else:
                     #    #    mtime = os.stat(path)[stat.ST_MTIME]
-                    #    #buf.scan(mtime=mtime, skip_scan_time_check=is_dirty)
+                    #    #
         else:
             #unsupported language
             buf = None
