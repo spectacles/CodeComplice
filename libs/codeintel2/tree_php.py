@@ -267,16 +267,34 @@ class PHPTreeEvaluator(TreeEvaluator):
             elem = self._elem_from_scoperef(start_scope)
             if elem.get("ilk") == "class":
                 interfacerefs = elem.get("interfacerefs", "").split()
-                #name = node.get("name")
-                interface_method_names = []
                 for interface in interfacerefs:
+                    completion_text = ""
                     ielem, iscoperef = self._hit_from_citdl(
                         interface, start_scope)
                     if ielem is not None:
                         for child in ielem.getchildren():
                             if child.get("ilk") == "function":
-                                interface_method_names.append( ("interface", child.get("signature") ) )
-                return interface_method_names
+                                attributes = child.get("attributes") or "public"
+                                signature = child.get("signature")
+                                doc = child.get("doc")
+                                docstring = ""
+                                if doc:
+                                    lines = doc.splitlines()
+                                    docstring = " * "+"\n * ".join(lines)
+                                docstring = "/**\n%s\n */\n" % (docstring) if doc else ""
+
+                                ##clean the signature
+                                from re import search
+                                m = search(r'([^\s]+)\(([^\[\(\)]*)', signature)
+                                if m:
+                                    method_name = m.group(1)
+                                    params = m.group(2).split(',')
+                                    params = [p.partition("$")[1]+p.partition("$")[2] for p in params]
+                                    joined_params = ", ".join(params)
+                                    clean_signature = method_name+"("+joined_params+")"
+
+                                completion_text += docstring+attributes+" function "+clean_signature+"\n{\n\n}\n\n"
+                return [("interface-methods", interface+"$$$"+completion_text)]
 
         elif trg.type == "magic-methods":
             elem = self._elem_from_scoperef(start_scope)

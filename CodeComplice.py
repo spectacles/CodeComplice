@@ -1410,13 +1410,9 @@ def format_completions_by_language(cplns, language, text_in_current_line, trigge
             if trigger.name == "php-complete-interface-methods":
                 ret_cplns = []
                 for cpln in cplns:
-                    m = re.search(r'([^\s]+)\(([^\[\(\)]*)', cpln[1])
-                    if m:
-                        method_name = m.group(1)
-                        params = m.group(2).split(',')
-                        params = [p.partition("$")[1]+p.partition("$")[2] for p in params]
-                        joined_params = ", ".join(params)
-                        ret_cplns.append( ('%s〔%s〕' % (method_name, "interface"), method_name+"("+joined_params.replace("$","\\$")+")" ) )
+                    cp = cpln[1].split("$$$")
+                    print("\n %s \n" % (cp))
+                    ret_cplns.append( ('%s〔%s〕' % (cp[0], "interface"), cp[1].replace("$","\\$") ) )
                 return ret_cplns
 
     return [('%s〔%s〕' % (n, t), n.replace("$","\\$") + ('($0)' if t == function else '')) for t, n in cplns]
