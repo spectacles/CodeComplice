@@ -204,9 +204,29 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
                             print "Explicit: prev_pos: %d, style: %d, ch: %r" % (prev_pos, prev_style, prev_char)
                 else:
                     prev_pos = pos - 2
-                if last_char in WHITESPACE and \
-                    (prev_style == self.keyword_style or
-                     (prev_style == self.operator_style and prev_char == ",")):
+                if last_char in WHITESPACE and (prev_style == self.operator_style and prev_char == "{"):
+                    p = prev_pos
+                    style = prev_style
+                    ch = prev_char
+                    # print "p: %d" % p
+                    while p > 0 and style == self.operator_style and ch in ",{":
+                        p, ch, style = ac.getPrecedingPosCharStyle(
+                            style, self.comment_styles_or_whitespace)
+                        # print "p 1: %d" % p
+                        if p > 0 and style == self.identifier_style:
+                            # Skip the identifier too
+                            p, ch, style = ac.getPrecedingPosCharStyle(
+                                style, self.comment_styles_or_whitespace)
+                    if DEBUG:
+                        ac.dump()
+                    p, text = ac.getTextBackWithStyle(
+                        style, self.comment_styles, max_text_len=len("implements"))
+                    if DEBUG:
+                        print("ac.getTextBackWithStyle:: pos: %d, text: %r" % (p, text))
+                    if text in ("implements", "extends", "class"):
+                        #we are in a class!
+                        return Trigger(lang, TRG_FORM_CPLN, "interface-methods", pos, implicit)
+                elif last_char in WHITESPACE and (prev_style == self.keyword_style or (prev_style == self.operator_style and prev_char == ",")):
                     p = prev_pos
                     style = prev_style
                     ch = prev_char
@@ -238,8 +258,6 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
                         return self._functionCalltipTrigger(ac, prev_pos, DEBUG)
                     elif text == "namespace":
                         return Trigger(lang, TRG_FORM_CPLN, "use-global-namespaces", pos, implicit)
-                    elif text == "function":
-                        return Trigger(lang, TRG_FORM_CPLN, "interface-methods", pos, implicit)
             elif last_style == self.operator_style:
                 if DEBUG:
                     print "  lang_style is operator style"

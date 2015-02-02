@@ -1408,12 +1408,20 @@ settings_manager = SettingsManager()
 
 def format_completions_by_language(cplns, language, text_in_current_line, trigger):
     function = None if 'import ' in text_in_current_line else 'function'
-    if language == "PHP" and (trigger and trigger.name == "php-complete-variables"):
-            #add dollar sign to variables!
-            return [('%s〔%s〕' % (('$' if t == 'variable' else '')+n, t), (('$' if t == 'variable' else '')+n).replace("$","\\$") + ('($0)' if t == function else '')) for t, n in cplns]
-    else:
-        return [('%s〔%s〕' % (n, t), (n).replace("$","\\$") + ('($0)' if t == function else '')) for t, n in cplns]
+    if language == "PHP":
+        if trigger:
+            if trigger.name == "php-complete-variables":
+                #add dollar sign to variables!
+                return [('%s〔%s〕' % (('$' if t == 'variable' else '')+n, t), (('$' if t == 'variable' else '')+n).replace("$","\\$")) for t, n in cplns]
+            if trigger.name == "php-complete-interface-methods":
+                ret_cplns = []
+                for cpln in cplns:
+                    cp = cpln[1].split("$$$")
+                    print("\n %s \n" % (cp))
+                    ret_cplns.append( ('%s〔%s〕' % (cp[0], "interface"), cp[1].replace("$","\\$") ) )
+                return ret_cplns
 
+    return [('%s〔%s〕' % (n, t), n.replace("$","\\$") + ('($0)' if t == function else '')) for t, n in cplns]
 
 def instantSnippets(view, pos, current_command):
     path = view.file_name()
