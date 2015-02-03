@@ -263,38 +263,61 @@ class PHPTreeEvaluator(TreeEvaluator):
             return self._interfaces_from_scope(self.expr, start_scope) + \
                 self._imported_namespaces_from_scope(self.expr, start_scope)
 
-        elif trg.type == "interface-methods":
+        elif trg.type == "inherited-methods":
             elem = self._elem_from_scoperef(start_scope)
+
             if elem.get("ilk") == "class":
+                completions = []
+                ref_elems = []
+
+                classref = elem.get("classrefs")
+                if classref:
+                    celem, iscoperef = self._hit_from_citdl(
+                        classref, start_scope)
+                    if celem is not None and "abstract" in celem.get("attributes"):
+                        ref_elems.append(celem)
+
                 interfacerefs = elem.get("interfacerefs", "").split()
                 for interface in interfacerefs:
-                    completion_text = ""
                     ielem, iscoperef = self._hit_from_citdl(
                         interface, start_scope)
                     if ielem is not None:
-                        for child in ielem.getchildren():
-                            if child.get("ilk") == "function":
-                                attributes = child.get("attributes") or "public"
-                                signature = child.get("signature")
-                                doc = child.get("doc")
-                                docstring = ""
-                                if doc:
-                                    lines = doc.splitlines()
-                                    docstring = " * "+"\n * ".join(lines)
-                                docstring = "/**\n%s\n */\n" % (docstring) if doc else ""
+                        ref_elems.append(ielem)
 
-                                ##clean the signature
-                                from re import search
-                                m = search(r'([^\s]+)\(([^\[\(\)]*)', signature)
-                                if m:
-                                    method_name = m.group(1)
-                                    params = m.group(2).split(',')
-                                    params = [p.partition("$")[1]+p.partition("$")[2] for p in params]
-                                    joined_params = ", ".join(params)
-                                    clean_signature = method_name+"("+joined_params+")"
 
-                                completion_text += docstring+attributes+" function "+clean_signature+"\n{\n\n}\n\n"
-                return [("interface-methods", interface+"$$$"+completion_text)]
+                for ref_elem in ref_elems:
+                    ref_type = ref_elem.get("ilk")
+                    completion_text = ""
+                    for child in ref_elem.getchildren():
+                        if child.get("ilk") == "function":
+                            attributes = child.get("attributes") or "public"
+                            if ref_type == "class":
+                                if not attributes.startswith("abstract"):
+                                    continue
+                                else:
+                                    attributes = attributes[9:]
+                            signature = child.get("signature")
+                            doc = child.get("doc")
+                            docstring = ""
+                            if doc:
+                                lines = doc.splitlines()
+                                docstring = " * "+"\n * ".join(lines)
+                            docstring = "/**\n%s\n */\n" % (docstring) if doc else ""
+
+                            ##clean the signature
+                            from re import search
+                            m = search(r'([^\s]+)\(([^\[\(\)]*)', signature)
+                            if m:
+                                method_name = m.group(1)
+                                params = m.group(2).split(',')
+                                params = [p.partition("$")[1]+p.partition("$")[2] for p in params]
+                                joined_params = ", ".join(params)
+                                clean_signature = method_name+"("+joined_params+")"
+
+                            completion_text += "\n%s%s function %s\n{\n\n}\n" % (docstring, attributes, clean_signature)
+                    completions.append(("%s %s" % (ref_elem.get("attributes"), ref_elem.get("ilk")), ref_elem.get("name")+"$$$"+completion_text))
+
+                return completions
 
         elif trg.type == "magic-methods":
             elem = self._elem_from_scoperef(start_scope)
