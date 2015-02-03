@@ -225,7 +225,7 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
                         print("ac.getTextBackWithStyle:: pos: %d, text: %r" % (p, text))
                     if text in ("implements", "extends", "class"):
                         #we are in a class!
-                        return Trigger(lang, TRG_FORM_CPLN, "interface-methods", pos, implicit)
+                        return Trigger(lang, TRG_FORM_CPLN, "inherited-methods", pos, implicit)
                 elif last_char in WHITESPACE and (prev_style == self.keyword_style or (prev_style == self.operator_style and prev_char == ",")):
                     p = prev_pos
                     style = prev_style

@@ -1413,12 +1413,11 @@ def format_completions_by_language(cplns, language, text_in_current_line, trigge
             if trigger.name == "php-complete-variables":
                 #add dollar sign to variables!
                 return [('%s〔%s〕' % (('$' if t == 'variable' else '')+n, t), (('$' if t == 'variable' else '')+n).replace("$","\\$")) for t, n in cplns]
-            if trigger.name == "php-complete-interface-methods":
+            if trigger.name == "php-complete-inherited-methods":
                 ret_cplns = []
                 for cpln in cplns:
                     cp = cpln[1].split("$$$")
-                    print("\n %s \n" % (cp))
-                    ret_cplns.append( ('%s〔%s〕' % (cp[0], "interface"), cp[1].replace("$","\\$") ) )
+                    ret_cplns.append( ('%s〔%s〕' % (cp[0], "inherited"), cp[1].replace("$","\\$") ) )
                 return ret_cplns
 
     return [('%s〔%s〕' % (n, t), n.replace("$","\\$") + ('($0)' if t == function else '')) for t, n in cplns]
