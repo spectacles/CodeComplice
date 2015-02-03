@@ -1538,7 +1538,7 @@ class PythonCodeIntel(sublime_plugin.EventListener):
 
         current_char = current_command[1]['characters'][-1]
 
-        if current_char in ["\n"]:
+        if current_char in ["\n","\t"]:
             view.run_command('hide_auto_complete')
             return
 
