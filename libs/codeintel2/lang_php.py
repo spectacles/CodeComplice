@@ -245,9 +245,11 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
                     p, text = ac.getTextBackWithStyle(
                         style, self.comment_styles, max_text_len=len("implements"))
                     if DEBUG:
-                        print "ac.getTextBackWithStyle:: pos: %d, text: %r" % (p, text)
-                    if text in ("new", "extends"):
+                        print("ac.getTextBackWithStyle:: pos: %d, text: %r" % (p, text))
+                    if text in ("new", ):
                         return Trigger(lang, TRG_FORM_CPLN, "classes", pos, implicit)
+                    if text in ("extends", ):
+                        return Trigger(lang, TRG_FORM_CPLN, "classes-and-traits", pos, implicit)
                     elif text in ("implements", ):
                         return Trigger(lang, TRG_FORM_CPLN, "interfaces", pos, implicit)
                     elif text in ("use", ):
