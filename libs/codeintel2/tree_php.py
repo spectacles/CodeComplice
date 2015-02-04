@@ -236,9 +236,6 @@ class PHPTreeEvaluator(TreeEvaluator):
         elif trg.type == "classes":
             return self._classes_from_scope(None, start_scope) + \
                 self._imported_namespaces_from_scope(None, start_scope)
-        elif trg.type == "classes-and-traits":
-            return self._classes_from_scope(None, start_scope) + \
-                self._traits_from_scope(None, start_scope)
         elif trg.type == "use-global-namespaces":
             return self._namespaces_from_scope(None, start_scope)
         elif trg.type == "use":
