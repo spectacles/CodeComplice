@@ -956,6 +956,11 @@ class PHPTreeEvaluator(TreeEvaluator):
                     else:
                         new_hit, nconsumed \
                             = self._hit_from_getattr(remaining_tokens, *hit)
+                        ##if is function and return is in (this, )
+                        ##return initial class
+                        if new_hit[0].get("ilk") == "function" and new_hit[0].get("returns") in ("this",):
+                            new_hit = hit
+
                     remaining_tokens = remaining_tokens[nconsumed:]
                 except CodeIntelError as ex:
                     self.debug("error %s", ex)
