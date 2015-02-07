@@ -84,13 +84,14 @@ All settings can be overridden in the *.sublime-project file under the value "co
     {
         "codeintel_settings":
         {
-          "codeintel_database_dir": "~/.codeintel/databases/myProject",
-          "codeintel_language_settings":
-          {
-              "JavaScript": {
-                  "codeintel_scan_files_in_project": true,
-                  "codeintel_scan_exclude_dir": ["/min/"]
-              },
+            "codeintel_database_dir": "~/.codeintel/databases/myProject",
+            "codeintel_language_settings":
+            {
+                "JavaScript": {
+                    "codeintel_scan_files_in_project": true,
+                    "codeintel_scan_exclude_dir": ["/min/"]
+                }
+            }
         }
     }
 
