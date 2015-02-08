@@ -1629,8 +1629,8 @@ class PythonCodeIntel(sublime_plugin.EventListener):
 
                     _completions = list(_completions + word_completions_from_buffer)
 
-        #is the sorting actually doing anything??
-        return (sorted(_completions, key=lambda o: o[1], reverse=False), word_completions | explicit_completions)
+            #is the sorting actually doing anything??
+            return (sorted(_completions, key=lambda o: o[1], reverse=False), word_completions | explicit_completions)
 
 
 
