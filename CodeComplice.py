@@ -498,12 +498,16 @@ def autocomplete(view, timeout, busy_timeout, forms, preemptive=False, args=[], 
             vid = view.id()
 
             def _trigger(trigger, citdl_expr, calltips=None, cplns=None):
-                global cplns_were_empty, last_trigger_name, last_citdl_expr, cpln_stop_chars
+                global cplns_were_empty, last_trigger_name, last_citdl_expr
 
                 add_word_completions = settings_manager.get("codeintel_word_completions", language=lang)
 
                 if cplns is not None or calltips is not None:
                     codeintel_log.info("Autocomplete called (%s) [%s]", lang, ','.join(c for c in ['cplns' if cplns else None, 'calltips' if calltips else None] if c))
+
+                if cplns is None and calltips is None:
+                  if caller == "no-popup-on-empty-results":
+                    return
 
                 if trigger:
                     log.debug("current triggername: %r" % trigger.name)
@@ -558,7 +562,6 @@ def autocomplete(view, timeout, busy_timeout, forms, preemptive=False, args=[], 
                 on_query_info["cplns"] = cplns
 
                 completions[vid] = on_query_info
-
 
                 def show_autocomplete():
                     view.run_command('auto_complete', {
@@ -1526,7 +1529,7 @@ class PythonCodeIntel(sublime_plugin.EventListener):
                 elif current_command[0] == 'insert_completion':
                     forms = ('calltips',)
 
-                caller = "other"
+                caller = "no-popup-on-empty-results"
                 autocomplete(view, 0, settings_manager.sublime_auto_complete_delay, forms, False, args=[path, pos, lang], kwargs={"caller":caller})
             return
 
@@ -1547,7 +1550,7 @@ class PythonCodeIntel(sublime_plugin.EventListener):
             return
         if current_char in "(, ":
             forms = ('calltips', 'cplns')
-            caller = "other"
+            caller = "try_calltips"
         else:
             forms = ('cplns',)
             caller = "on_modified"
