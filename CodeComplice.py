@@ -1528,10 +1528,10 @@ class PythonCodeIntel(sublime_plugin.EventListener):
         if current_command[0] not in ['insert']:
             view.run_command('hide_auto_complete')
             #show subsequent calltips instantly, if appropriate
-            if current_command[0] in ['insert_completion','insert_snippet']:
+            if current_command[0] in ['commit_completion','insert_snippet']:
                 if current_command[0] == 'insert_snippet':
                     forms = ('calltips', 'cplns')
-                elif current_command[0] == 'insert_completion':
+                elif current_command[0] == 'commit_completion':
                     forms = ('calltips',)
 
                 caller = "other"
@@ -1649,7 +1649,7 @@ class PythonCodeIntel(sublime_plugin.EventListener):
 
 class ReplaceTab(sublime_plugin.TextCommand):
     def run(self, edit, strippedLine, line_from, line_to):
-        backLine = sublime.Region(line_from, line_to)
+        backLine = sublime.Region(long(line_from), long(line_to))
         self.view.replace(edit, backLine, strippedLine)
 
 
