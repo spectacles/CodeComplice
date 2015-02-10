@@ -144,7 +144,7 @@ cpln_stop_chars = {
     'CSS': " ('\";{},.>/",
     'JavaScript': "~`!@#%^&*()-=+{}[]|\\;:'\",<>?/",
     'Perl': "-~`!@#$%^&*()=+{}[]|\\;:'\",.<>?/",
-    'PHP': "~`@%^&*()=+{}]|;'\",.<?/",
+    'PHP': "~`@%^&*=+{}]|;.<?/",
     'Python': "~`!@#$%^&*()-=+{}[]|\\;:'\",<>?/",
     'Python3': "~`!@#$%^&*()-=+{}[]|\\;:'\",<>?/",
     'Ruby': "~`@#$%^&*(+}[]|\\;:,<>/'\"."
@@ -507,9 +507,11 @@ def autocomplete(view, timeout, busy_timeout, forms, preemptive=False, args=[], 
                 if cplns is not None or calltips is not None:
                     codeintel_log.info("Autocomplete called (%s) [%s]", lang, ','.join(c for c in ['cplns' if cplns else None, 'calltips' if calltips else None] if c))
 
-                if calltips and caller != "on_modified":
-                    if trigger:
-                        print("current triggername: %r" % trigger.name)
+                if trigger:
+                    log.debug("current triggername: %r" % trigger.name)
+                    print("current triggername: %r" % trigger.name)
+
+                if calltips:
                     tooltip(view, calltips, text_in_current_line, original_pos, lang, caller)
                     return
 
@@ -533,8 +535,6 @@ def autocomplete(view, timeout, busy_timeout, forms, preemptive=False, args=[], 
 
                 api_completions_only = False
                 if trigger:
-                    log.debug("current triggername: %r" % trigger.name)
-                    print("current triggername: %r" % trigger.name)
                     api_cplns_only_trigger = [
                         "php-complete-static-members",
                         "php-complete-object-members",
@@ -1525,10 +1525,14 @@ class PythonCodeIntel(sublime_plugin.EventListener):
         current_command = view.command_history(0)
 
         if current_command[0] not in ['insert']:
-            #show subsequent calltips instantly, if appropriate
             view.run_command('hide_auto_complete')
-            if current_command[0] in ['insert_completion', 'insert_snippet']:
-                forms = ('calltips',)
+            #show subsequent calltips instantly, if appropriate
+            if current_command[0] in ['insert_completion','insert_snippet']:
+                if current_command[0] == 'insert_snippet':
+                    forms = ('calltips', 'cplns')
+                elif current_command[0] == 'insert_completion':
+                    forms = ('calltips',)
+
                 caller = "other"
                 autocomplete(view, 0, settings_manager.sublime_auto_complete_delay, forms, False, args=[path, pos, lang], kwargs={"caller":caller})
             return
@@ -1548,8 +1552,8 @@ class PythonCodeIntel(sublime_plugin.EventListener):
         if is_stop_char:
             view.run_command('hide_auto_complete')
             return
-        if current_char == ",":
-            forms = ('calltips',)
+        if current_char in "(, ":
+            forms = ('calltips', 'cplns')
             caller = "other"
         else:
             forms = ('cplns',)
