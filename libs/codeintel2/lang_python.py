@@ -347,6 +347,17 @@ class PythonLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
         from SilverCity.Keywords import python_keywords
         return python_keywords.split(" ")
 
+    def preceding_trg_from_pos(self, buf, pos, curr_pos, preceding_trg_terminators=None, trigger_type="both", DEBUG=False):
+        #DEBUG = True
+        # Try the default preceding_trg_from_pos handler
+        trg = ProgLangTriggerIntelMixin.preceding_trg_from_pos(
+            self, buf, pos, curr_pos, preceding_trg_terminators=preceding_trg_terminators, trigger_type=trigger_type,
+            DEBUG=DEBUG)
+        if trg is not None:
+            return trg
+
+        return buf.trg_from_pos(curr_pos, implicit=False, trigger_type=trigger_type, DEBUG=DEBUG)
+
     def async_eval_at_trg(self, buf, trg, ctlr):
         if _xpcom_:
             trg = UnwrapObject(trg)
@@ -1046,23 +1057,25 @@ class PythonBuffer(CitadelBuffer):
                     print("Identifier style")
                 else:
                     print("Identifier keyword style")
-            # Previous char also need to be an identifier/word, then the one
-            # before that needs to be something different (operator/space).
-            if (accessor.style_at_pos(last_pos-1) != style or
-                    (pos > 2 and accessor.style_at_pos(last_pos-2) == style)):
-                if DEBUG:
-                    print("Not a block of two ident/word chars")
-                return None
-            if pos > 2 and accessor.char_at_pos(last_pos-2) == ".":
+
+            #get word begining
+            start_pos = pos
+            while (accessor.style_at_pos(start_pos-1) == style and start_pos > 0):
+                start_pos -= 1
+
+            if start_pos > 0 and accessor.char_at_pos(start_pos-1) == ".":
                 if DEBUG:
                     print("  preceeded by '.' operator - not a trigger")
                 return None
+
+            #get the complete word
+            word = accessor.text_range(start_pos, pos)
 
             # Check if it makes sense to show the completions here. If defining
             # a class name, or function name, you don't want to see completions.
             # Also, do not override another completion type (e.g. imports).
             start = accessor.line_start_pos_from_pos(pos)
-            preceeding_text = accessor.text_range(start, last_pos-2).strip()
+            preceeding_text = accessor.text_range(start, start_pos-1).strip()
             if preceeding_text:
                 first_word = preceeding_text.split(" ")[0]
                 if first_word in ("class", "def", "import", "from", "except"):
@@ -1074,7 +1087,7 @@ class PythonBuffer(CitadelBuffer):
                     #   complete-available-exceptions
                     return None
 
-            citdl_expr = accessor.text_range(last_pos-1, last_pos+1)
+            citdl_expr = word[0:2]
             if DEBUG:
                 print("  triggered 2 char symbol trigger: %r" % (citdl_expr, ))
             return Trigger(self.lang, TRG_FORM_CPLN, "local-symbols",
