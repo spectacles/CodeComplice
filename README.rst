@@ -25,6 +25,12 @@ Plugin should work in all three platforms (MacOS X, Windows and Linux).
 Installing
 ----------
 
+#### with [Sublime Package Control](http://wbond.net/sublime_packages/package_control)
+
+ 1. Open command pallet (default: `ctrl+shift+p`)
+ 2. Type `package control install` and select command `Package Control: Install Package`
+ 3. Type `complice` and select "CodeComplice"
+
 **Without Git:** Download the latest source from `GitHub <http://github.com/spectacles/CodeComplice3>`_ and copy the whole directory into the Packages directory.
 
 **With Git:** Clone the repository in your Sublime Text Packages directory, located somewhere in user's "Home" directory::
@@ -157,6 +163,18 @@ To force re-indexation of the code intelligence database you need to follow thes
 * Delete the whole directory and all of its content.
 
 * Start Sublime Text and enjoy a clean re-indexing!
+
+
+What's New
+----------
+
+v1.0.6 (2015-02-11):
+
++ [this](https://github.com/SublimeCodeIntel/SublimeCodeIntel/issues/477) is now working
+
++ Python Trigger complete-local-symbols (the full way, not the SublimeCodeIntel way!)
+
++ usability tweaks
 
 
 License
