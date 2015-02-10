@@ -167,12 +167,11 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
         return None
 
     #@util.hotshotit
-        # DEBUG = True
     def trg_from_pos(self, buf, pos, implicit=True, ac=None, trigger_type="both", DEBUG=False):
+        #DEBUG = True
         if pos < 4:
             return None
 
-        # DEBUG = True
         # Last four chars and styles
         if ac is None:
             ac = AccessorCache(buf.accessor, pos, fetchsize=4)
@@ -183,6 +182,7 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
 
         if DEBUG:
             print("\nphp trg_from_pos")
+            print("  implicit: %s" % str(implicit))
             print("  last_pos: %s" % last_pos)
             print("  last_char: %s" % last_char)
             print("  last_style: %r" % last_style)
@@ -195,69 +195,57 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
                 if DEBUG:
                     print("Whitespace style")
                 WHITESPACE = tuple(" \t\n\r\v\f")
+
                 if not implicit:
-                    # If we're not already at the keyword style, find it
                     if prev_style != self.keyword_style:
+                        #find the last non comment or whitespace
                         prev_pos, prev_char, prev_style = ac.getPrecedingPosCharStyle(
                             last_style, self.comment_styles)
                         if DEBUG:
                             print("Explicit: prev_pos: %d, style: %d, ch: %r" % (prev_pos, prev_style, prev_char))
                 else:
                     prev_pos = pos - 2
+
                 if last_char in WHITESPACE and (prev_style == self.operator_style and prev_char == "{"):
-                    p = prev_pos
-                    style = prev_style
-                    ch = prev_char
-                    # print "p: %d" % p
-                    while p > 0 and style == self.operator_style and ch in ",{":
-                        p, ch, style = ac.getPrecedingPosCharStyle(
-                            style, self.comment_styles_or_whitespace)
-                        # print "p 1: %d" % p
-                        if p > 0 and style == self.identifier_style:
-                            # Skip the identifier too
-                            p, ch, style = ac.getPrecedingPosCharStyle(
-                                style, self.comment_styles_or_whitespace)
-                    if DEBUG:
-                        ac.dump()
-                    p, text = ac.getTextBackWithStyle(
-                        style, self.comment_styles, max_text_len=len("implements"))
+                    #IF WE ARE IN A CLASS, TRIGGER WILL CHECK FOR INHERITED METHODS
+                    # If we're not already at the keyword style, find it
+                    while prev_style != self.keyword_style:
+                        prev_pos, prev_char, prev_style = ac.getPrecedingPosCharStyle(
+                            last_style, self.comment_styles_or_whitespace)
+
+                    p, text = ac.getTextBackWithStyle(prev_style, self.comment_styles, max_text_len=len("implements"))
                     if DEBUG:
                         print("ac.getTextBackWithStyle:: pos: %d, text: %r" % (p, text))
                     if text in ("implements", "extends", "class"):
                         #we are in a class!
                         return Trigger(lang, TRG_FORM_CPLN, "inherited-methods", pos, implicit)
                 elif last_char in WHITESPACE and (prev_style == self.keyword_style or (prev_style == self.operator_style and prev_char == ",")):
-                    p = prev_pos
-                    style = prev_style
-                    ch = prev_char
-                    # print "p: %d" % p
-                    while p > 0 and style == self.operator_style and ch == ",":
-                        p, ch, style = ac.getPrecedingPosCharStyle(
-                            style, self.comment_styles_or_whitespace)
-                        # print "p 1: %d" % p
-                        if p > 0 and style == self.identifier_style:
-                            # Skip the identifier too
-                            p, ch, style = ac.getPrecedingPosCharStyle(
-                                style, self.comment_styles_or_whitespace)
-                            # print "p 2: %d" % p
-                    if DEBUG:
-                        ac.dump()
-                    p, text = ac.getTextBackWithStyle(
-                        style, self.comment_styles, max_text_len=len("implements"))
+                    if trigger_type == "calltips":
+                        import sublime
+                        sublime.message_dialog("arg sep calltip")
+
+                        ac.resetToPosition(prev_pos)
+                        return self._functionCalltipTrigger(ac, prev_pos, DEBUG)
+
+                    # If we're not already at the keyword style, find it
+                    while prev_style != self.keyword_style:
+                        prev_pos, prev_char, prev_style = ac.getPrecedingPosCharStyle(
+                            last_style, self.comment_styles_or_whitespace)
+
+                    p, text = ac.getTextBackWithStyle(prev_style, self.comment_styles, max_text_len=len("implements"))
+
                     if DEBUG:
                         print("ac.getTextBackWithStyle:: pos: %d, text: %r" % (p, text))
+
                     if text in ("new", "extends"):
                         return Trigger(lang, TRG_FORM_CPLN, "classes", pos, implicit)
                     elif text in ("implements", ):
                         return Trigger(lang, TRG_FORM_CPLN, "interfaces", pos, implicit)
                     elif text in ("use", ):
                         return Trigger(lang, TRG_FORM_CPLN, "use", pos, implicit)
-                    elif prev_style == self.operator_style and \
-                            prev_char == "," and implicit:
-                        ac.resetToPosition(prev_pos)
-                        return self._functionCalltipTrigger(ac, prev_pos, DEBUG)
                     elif text == "namespace":
                         return Trigger(lang, TRG_FORM_CPLN, "use-global-namespaces", pos, implicit)
+
             elif last_style == self.operator_style:
                 if DEBUG:
                     print("  lang_style is operator style")
@@ -1096,8 +1084,8 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
 
         stdout_lines = stdout_lines[stdout_lines.index(marker)+1:]
         php_ver = stdout_lines[0]
-        include_path = [p.strip() for p in stdout_lines[1].split(os.pathsep)
-                        if p.strip()]
+        include_path = [path.strip() for path in stdout_lines[1].split(os.pathsep)
+                        if path.strip()]
 
         return php_ver, include_path
 
