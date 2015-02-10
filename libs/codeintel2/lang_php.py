@@ -167,8 +167,8 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
         return None
 
     #@util.hotshotit
-    def trg_from_pos(self, buf, pos, implicit=True, DEBUG=False, ac=None):
         # DEBUG = True
+    def trg_from_pos(self, buf, pos, implicit=True, ac=None, trigger_type="both", DEBUG=False):
         if pos < 4:
             return None
 
@@ -313,7 +313,7 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
                             prev_style, self.comment_styles_or_whitespace)
                     if prev_style in (self.identifier_style, self.keyword_style):
 
-                        if buf.caller == "on_modified":
+                        if not trigger_type == "calltips":
                             ##call function trigger in within function brackets
                             if last_char == "(" and buf.orig_pos-pos >= 3:
                                 ## at least 3 char have been typed to trigger
@@ -598,12 +598,11 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
         return None
 
     #@util.hotshotit
-    def preceding_trg_from_pos(self, buf, pos, curr_pos,
-                               preceding_trg_terminators=None, DEBUG=False):
-        # DEBUG = True
+    def preceding_trg_from_pos(self, buf, pos, curr_pos, preceding_trg_terminators=None, trigger_type="both", DEBUG=False):
+        #DEBUG = True
         # Try the default preceding_trg_from_pos handler
         trg = ProgLangTriggerIntelMixin.preceding_trg_from_pos(
-            self, buf, pos, curr_pos, preceding_trg_terminators,
+            self, buf, pos, curr_pos, preceding_trg_terminators=preceding_trg_terminators, trigger_type=trigger_type,
             DEBUG=DEBUG)
         if trg is not None:
             return trg
@@ -645,8 +644,7 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
                     print "preceding_trg_from_pos:: reset to position: %d, ac now:" % (resetPos)
                     ac.dump()
                 # Trigger on the third identifier character
-                return self.trg_from_pos(buf, resetPos,
-                                         implicit=False, DEBUG=DEBUG, ac=ac)
+                return self.trg_from_pos(buf, resetPos, implicit=False, ac=ac, trigger_type=trigger_type, DEBUG=DEBUG)
             elif DEBUG:
                 print "Out of scope of the identifier"
 
@@ -667,8 +665,7 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
                         comment)) + at_idx + space_idx + 1
                     if DEBUG:
                         print "\nphp preceding_trg_from_pos::phpdoc: calltip at %d" % (trg_pos, )
-                    return self.trg_from_pos(buf, trg_pos,
-                                             implicit=False, DEBUG=DEBUG)
+                    return self.trg_from_pos(buf, trg_pos, implicit=False, trigger_type=trigger_type, DEBUG=DEBUG)
 
     _phpdoc_cplns = [("variable", t) for t in sorted(phpdoc_tags)]
 

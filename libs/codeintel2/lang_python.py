@@ -710,7 +710,7 @@ class PythonBuffer(CitadelBuffer):
     def libs(self):
         return self.langintel.libs_from_buf(self)
 
-    def trg_from_pos(self, pos, implicit=True):
+    def trg_from_pos(self, pos, implicit=True, trigger_type="both", DEBUG=False):
         """Python trigger types:
 
         python-complete-object-members

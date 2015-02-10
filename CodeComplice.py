@@ -893,15 +893,16 @@ def codeintel(view, path, content, lang, pos, forms, callback=None, timeout=7000
         cplns = None
         calltips = None
         defns = None
+        trg = None
 
 
         if not buf:
             logger(view, 'warning', "`%s' (%s) is not a language that uses CIX" % (path, lang))
             return [None] * len(forms)
 
-        def get_trg(type, *args):
+        def get_trg(type, *args, **kwargs):
             try:
-                trg = getattr(buf, type, lambda *a: None)(*args)
+                trg = getattr(buf, type, lambda *a: None)(*args, **kwargs)
             except CodeIntelError:
                 codeintel_log.exception("Exception! %s:%s (%s)" % (path or '<Unsaved>', pos, lang))
                 logger(view, 'info', "Error indexing! Please send the log file: '%s" % condeintel_log_filename)
@@ -913,10 +914,10 @@ def codeintel(view, path, content, lang, pos, forms, callback=None, timeout=7000
             return trg
 
         bpos = pos2bytes(content, pos)
-        if 'cplns' in forms:
-            trg = get_trg('preceding_trg_from_pos', bpos, bpos)
-        elif 'calltips' in forms:
-            trg = get_trg('trg_from_pos', bpos)
+        if 'calltips' in forms:
+            trg = get_trg('preceding_trg_from_pos', bpos, bpos, trigger_type="calltips")
+        if trg is None and 'cplns' in forms:
+            trg = get_trg('preceding_trg_from_pos', bpos, bpos, trigger_type="cplns")
         elif 'defns' in forms:
             trg = get_trg('defn_trg_from_pos', bpos)
 
@@ -927,11 +928,11 @@ def codeintel(view, path, content, lang, pos, forms, callback=None, timeout=7000
         codeintel_log.handlers = list(_hdlrs) + [hdlr]
         ctlr = LogEvalController(codeintel_log)
         try:
-            if 'cplns' in forms and trg and trg.form == TRG_FORM_CPLN:
+            if trg and trg.form == TRG_FORM_CPLN:
                 cplns = buf.cplns_from_trg(trg, ctlr=ctlr, timeout=20)
-            if 'calltips' in forms and trg and trg.form == TRG_FORM_CALLTIP:
+            if trg and trg.form == TRG_FORM_CALLTIP:
                 calltips = buf.calltips_from_trg(trg, ctlr=ctlr, timeout=20)
-            if 'defns' in forms and trg and trg.form == TRG_FORM_DEFN:
+            if trg and trg.form == TRG_FORM_DEFN:
                 defns = buf.defns_from_trg(trg, ctlr=ctlr, timeout=20)
         except EvalTimeout:
             logger(view, 'info', "Timeout while resolving completions!")

@@ -149,7 +149,7 @@ class XMLLexer(UDLLexer):
 class XMLLangIntel(LangIntel):
     lang = lang
 
-    def trg_from_pos(self, buf, pos, implicit=True, DEBUG=False):
+    def trg_from_pos(self, buf, pos, implicit=True, trigger_type="both", DEBUG=False):
         """XML trigger types:
 
         xml-complete-tags-and-namespaces    <|
@@ -279,7 +279,7 @@ class XMLLangIntel(LangIntel):
                                pos, implicit)
         return None
 
-    def preceding_trg_from_pos(self, buf, pos, curr_pos, DEBUG=False):
+    def preceding_trg_from_pos(self, buf, pos, curr_pos, trigger_type="both", DEBUG=False):
         # XXX Eventually we'll use UDL for pure HTML too, so won't need
         #    this check.
         if isinstance(buf, UDLBuffer):

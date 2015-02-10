@@ -478,7 +478,7 @@ class CSSLangIntel(LangIntel, ParenStyleCalltipIntelMixin):
             ["import", "media", "charset", "font-face", "page", "namespace"],
             key=OrdPunctLast)
 
-    def preceding_trg_from_pos(self, buf, pos, curr_pos):
+    def preceding_trg_from_pos(self, buf, pos, curr_pos, trigger_type="both"):
         DEBUG = DebugStatus  # not using 'logging' system, because want to be fast
         # DEBUG = True # not using 'logging' system, because want to be fast
 
@@ -771,7 +771,7 @@ class CSSLangIntel(LangIntel, ParenStyleCalltipIntelMixin):
             print "----- CSS trg_from_pos() -----"
         return None
 
-    def trg_from_pos(self, buf, pos, implicit=True, ac=None):
+    def trg_from_pos(self, buf, pos, implicit=True, ac=None, trigger_type="both"):
         DEBUG = DebugStatus  # not using 'logging' system, because want to be fast
         if isinstance(buf, UDLBuffer):
             # This is CSS content in a multi-lang buffer.

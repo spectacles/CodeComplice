@@ -353,7 +353,7 @@ class UDLBuffer(CitadelBuffer):
         line = self.accessor.line_from_pos(pos) + 1  # convert to 1-based
         return self.scoperef_from_blob_and_line(blob, line)
 
-    def trg_from_pos(self, pos, implicit=True):
+    def trg_from_pos(self, pos, implicit=True, trigger_type="both"):
         if pos == 0:
             return None
         lang = self.lang_from_pos(pos-1)
@@ -366,9 +366,9 @@ class UDLBuffer(CitadelBuffer):
             langintel = self.mgr.langintel_from_lang(lang)
         except KeyError:
             return None
-        return langintel.trg_from_pos(self, pos, implicit=implicit)
+        return langintel.trg_from_pos(self, pos, implicit=implicit, trigger_type=trigger_type)
 
-    def preceding_trg_from_pos(self, pos, curr_pos):
+    def preceding_trg_from_pos(self, pos, curr_pos, trigger_type="both"):
         if curr_pos == 0:
             return None
         lang = self.lang_from_pos(curr_pos-1)
@@ -376,7 +376,7 @@ class UDLBuffer(CitadelBuffer):
             langintel = self.mgr.langintel_from_lang(lang)
         except KeyError:
             return None
-        return langintel.preceding_trg_from_pos(self, pos, curr_pos)
+        return langintel.preceding_trg_from_pos(self, pos, curr_pos, trigger_type=trigger_type)
 
     def curr_calltip_arg_range(self, trg_pos, calltip, curr_pos):
         if curr_pos == 0:
