@@ -512,6 +512,7 @@ def autocomplete(view, timeout, busy_timeout, forms, preemptive=False, args=[], 
                     return
 
                 if trigger:
+                    last_trigger_name = trigger.name
                     log.debug("current triggername: %r" % trigger.name)
                     print("current triggername: %r" % trigger.name)
 
@@ -554,7 +555,6 @@ def autocomplete(view, timeout, busy_timeout, forms, preemptive=False, args=[], 
                         api_completions_only = True
                         add_word_completions = "None"
 
-                last_trigger_name = trigger.name if trigger else None
                 last_citdl_expr = citdl_expr
 
 
@@ -1534,7 +1534,11 @@ class PythonCodeIntel(sublime_plugin.EventListener):
             if current_command[0] in ['commit_completion','insert_snippet']:
                 if current_command[0] == 'insert_snippet':
                     forms = ('calltips', 'cplns')
+
                 elif current_command[0] == 'commit_completion':
+                    #don't offer the same calltip twice in a row
+                    if "calltip" in last_trigger_name:
+                        return
                     forms = ('calltips',)
 
                 caller = "no-popup-on-empty-results"
