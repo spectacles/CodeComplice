@@ -417,7 +417,7 @@ class PerlLangIntel(CitadelLangIntel,
     trg_chars = tuple(' (>:')
     calltip_trg_chars = tuple(' (')
 
-    def trg_from_pos(self, buf, pos, implicit=True):
+    def trg_from_pos(self, buf, pos, implicit=True, trigger_type="both"):
         """
         Implemented triggers
             calltip-space-call-signature

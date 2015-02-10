@@ -156,7 +156,7 @@ class Buffer(object):
         if self.env:
             self.env.set_project(project)
 
-    def trg_from_pos(self, pos, implicit=True):
+    def trg_from_pos(self, pos, implicit=True, trigger_type="both"):
         """If the given position is a _likely_ trigger point, return a
         relevant Trigger instance. Otherwise return the None.
 
@@ -172,9 +172,9 @@ class Buffer(object):
         This is generally a better place to implement trg_from_pos if this
         language's content can appear in a multi-language buffer (e.g. CSS).
         """
-        return self.langintel.trg_from_pos(self, pos, implicit)
+        return self.langintel.trg_from_pos(self, pos, implicit, type=trigger_type)
 
-    def preceding_trg_from_pos(self, pos, curr_pos):
+    def preceding_trg_from_pos(self, pos, curr_pos, trigger_type="both"):
         """Look back from the given position for a trigger point within
         range.
 
@@ -205,7 +205,7 @@ class Buffer(object):
 
         Returns a Trigger instance or None.
         """
-        return self.langintel.preceding_trg_from_pos(self, pos, curr_pos)
+        return self.langintel.preceding_trg_from_pos(self, pos, curr_pos, trigger_type=trigger_type)
 
     def async_eval_at_trg(self, trg, ctlr):
         """Asynchronously determine completion/calltip info for the given

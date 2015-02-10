@@ -273,8 +273,7 @@ class JavaScriptLangIntel(CitadelLangIntel,
             print("  no function found, ran out of chars to look at, p: %d" % (p,))
         return None
 
-    def trg_from_pos(self, buf, pos, implicit=True,
-                     lang=None):
+    def trg_from_pos(self, buf, pos, implicit=True, lang=None, trigger_type="both"):
         DEBUG = False  # not using 'logging' system, because want to be fast
         # DEBUG = True
         # if DEBUG:
@@ -557,8 +556,7 @@ class JavaScriptLangIntel(CitadelLangIntel,
 
         return None
 
-    def preceding_trg_from_pos(self, buf, pos, curr_pos,
-                               preceding_trg_terminators=None, DEBUG=False):
+    def preceding_trg_from_pos(self, buf, pos, curr_pos, preceding_trg_terminators=None, trigger_type="both", DEBUG=False):
         DEBUG = False
         if DEBUG:
             print("pos: %d" % (pos, ))

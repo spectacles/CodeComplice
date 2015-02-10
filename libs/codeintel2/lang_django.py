@@ -204,7 +204,7 @@ class DjangoLangIntel(LangIntel):
     trg_chars = tuple('| ')
     calltip_trg_chars = tuple()
 
-    def trg_from_pos(self, buf, pos, implicit=True, DEBUG=False):
+    def trg_from_pos(self, buf, pos, implicit=True, trigger_type="both", DEBUG=False):
         """
             CODE       CONTEXT      RESULT
             '{<|>'     anywhere     tag names, i.e. {% if %}

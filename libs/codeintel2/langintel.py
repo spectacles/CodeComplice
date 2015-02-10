@@ -242,10 +242,10 @@ class ImplicitLangIntel(LangIntel):
         self.lang = lang
         LangIntel.__init__(self, mgr)
 
-    def trg_from_pos(self, buf, pos, implicit=True):
+    def trg_from_pos(self, buf, pos, implicit=True, trigger_type="both"):
         return None
 
-    def preceding_trg_from_pos(self, buf, pos, curr_pos):
+    def preceding_trg_from_pos(self, buf, pos, curr_pos, trigger_type="both"):
         return None
 
     def async_eval_at_trg(self, buf, trg, ctlr):
@@ -417,8 +417,7 @@ class ProgLangTriggerIntelMixin(object):
     # style matches.
     preceding_trg_terminators = {';': None}
 
-    def preceding_trg_from_pos(self, buf, pos, curr_pos,
-                               preceding_trg_terminators=None, DEBUG=False):
+    def preceding_trg_from_pos(self, buf, pos, curr_pos, preceding_trg_terminators=None, trigger_type="both", DEBUG=False):
         accessor = buf.accessor
         if preceding_trg_terminators is None:
             preceding_trg_terminators = self.preceding_trg_terminators
@@ -464,7 +463,7 @@ class ProgLangTriggerIntelMixin(object):
                       and accessor.char_at_pos(first_stage_limit-1)
                       or None)))
         p = pos
-        if p >= first_stage_limit:
+        if p >= first_stage_limit and trigger_type != "calltips":
             for (prev_ch, prev_style) in accessor.gen_char_and_style_back(p-1,
                                                                           first_stage_limit-2):
                 if (not skip_styles and prev_style != start_style
@@ -490,7 +489,7 @@ class ProgLangTriggerIntelMixin(object):
                 elif prev_ch in self.trg_chars:
                     if DEBUG:
                         print("trigger char, try it")
-                    trg = buf.trg_from_pos(p, implicit=False)
+                    trg = buf.trg_from_pos(p, implicit=False, trigger_type=trigger_type)
                     if trg:
                         if DEBUG:
                             print("[stage 1] %s" % trg)
@@ -509,48 +508,49 @@ class ProgLangTriggerIntelMixin(object):
         # As well, ignore enclosed paren sections to make sure we are
         # in-range. For example, we shouldn't trigger on "bar(" here:
         #   foo(bar("skip", "this", "arg", "list"), <|>)
-        close_paren_count = 0
-        for (prev_ch, prev_style) in accessor.gen_char_and_style_back(p-1, limit-2):
-            if (not skip_styles and prev_style != start_style
-                # EOLs in comments seem to always be style 0. Don't count
-                # them.
-                    and prev_ch not in EOL_CHARS):
-                if DEBUG:
-                    print("[stage 2] seen a style change (%d -> %d), now " \
-                          "skipping strings and comments" \
-                          % (start_style, prev_style))
-                skip_styles = comment_and_string_styles
-
-            if DEBUG:
-                print("[stage 2] consider pos %2d: prev_ch=%r (%d) --"\
-                      % (p, prev_ch, prev_style), end=' ')
-            if prev_style in skip_styles:
-                if DEBUG:
-                    print("comment or string, skip it")
-            elif prev_ch == ')':
-                close_paren_count += 1
-                if DEBUG:
-                    print("close paren: count=%d" % close_paren_count)
-            elif close_paren_count and prev_ch == '(':
-                close_paren_count -= 1
-                if DEBUG:
-                    print("open paren: count=%d" % close_paren_count)
-            elif self._is_terminating_char(prev_ch, prev_style,
-                                           preceding_trg_terminators):
-                if DEBUG:
-                    print("in `preceding_trg_terminators': break")
-                return None
-            elif prev_ch in self.calltip_trg_chars:
-                if DEBUG:
-                    print("trigger char, try it")
-                trg = buf.trg_from_pos(p, implicit=False)
-                if trg:
+        if trigger_type != "cplns":
+            close_paren_count = 0
+            for (prev_ch, prev_style) in accessor.gen_char_and_style_back(p-1, limit-2):
+                if (not skip_styles and prev_style != start_style
+                    # EOLs in comments seem to always be style 0. Don't count
+                    # them.
+                        and prev_ch not in EOL_CHARS):
                     if DEBUG:
-                        print("[stage 2] %s" % trg)
-                    return trg
-            elif DEBUG:
-                print("not a trigger char, skip it")
-            p -= 1
+                        print("[stage 2] seen a style change (%d -> %d), now " \
+                              "skipping strings and comments" \
+                              % (start_style, prev_style))
+                    skip_styles = comment_and_string_styles
+
+                if DEBUG:
+                    print("[stage 2] consider pos %2d: prev_ch=%r (%d) --"\
+                          % (p, prev_ch, prev_style), end=' ')
+                if prev_style in skip_styles:
+                    if DEBUG:
+                        print("comment or string, skip it")
+                elif prev_ch == ')':
+                    close_paren_count += 1
+                    if DEBUG:
+                        print("close paren: count=%d" % close_paren_count)
+                elif close_paren_count and prev_ch == '(':
+                    close_paren_count -= 1
+                    if DEBUG:
+                        print("open paren: count=%d" % close_paren_count)
+                elif self._is_terminating_char(prev_ch, prev_style,
+                                               preceding_trg_terminators):
+                    if DEBUG:
+                        print("in `preceding_trg_terminators': break")
+                    return None
+                elif prev_ch in self.calltip_trg_chars:
+                    if DEBUG:
+                        print("trigger char, try it_")
+                    trg = buf.trg_from_pos(p, implicit=False, trigger_type="calltips")
+                    if trg:
+                        if DEBUG:
+                            print("[stage 2] %s" % trg)
+                        return trg
+                elif DEBUG:
+                    print("not a trigger char, skip it")
+                p -= 1
 
         return None
 

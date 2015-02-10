@@ -648,7 +648,7 @@ class RubyLangIntel(CitadelLangIntel,
         op = accessor.text_range(prev_start_pos, prev_end_pos)
         return op not in ("{", "do")
 
-    def trg_from_pos(self, buf, pos, implicit=True, DEBUG=False):
+    def trg_from_pos(self, buf, pos, implicit=True, trigger_type="both", DEBUG=False):
         """If the given position is a _likely_ trigger point, return the
         trigger type. Otherwise return None.
         """
@@ -1179,7 +1179,7 @@ class RubyLangIntel(CitadelLangIntel,
         """ % {"ident": "((?!\d)\w+)", "number": _number_pat}, re.X)
 
     #@hotshotit
-    def preceding_trg_from_pos(self, buf, pos, curr_pos, DEBUG=False):
+    def preceding_trg_from_pos(self, buf, pos, curr_pos, trigger_type="both", DEBUG=False):
         """ Cases where we're interested in continuing a trigger:
 
         Examples:
