@@ -263,12 +263,8 @@ def tooltip(view, calltips, text_in_current_line, original_pos, lang, caller):
                             var = var[1:]
                         snippet.append('${%s:%s}' % (n, var.replace('$', '\\$')))
                         n += 1
-                if caller == "instant_snippet" and not arguments == 0:
-                    if snippet:
-                        snippet = snippet[0]
-                else:
-                    full_snippet = ', '.join(snippet)
-                    snippet = full_snippet
+                full_snippet = ', '.join(snippet)
+                snippet = full_snippet
                 if arguments and snippet:
                     snippet = initial_separator + snippet
             text += ' - ' + tip_info[0]  # Add function to the end
@@ -1421,31 +1417,6 @@ def format_completions_by_language(cplns, language, text_in_current_line, trigge
     return [('%s〔%s〕' % (n, t), n.replace("$","\\$") + ('($0)' if t == function else '')) for t, n in cplns]
 
 
-def instantSnippets(view, pos, current_command):
-    path = view.file_name()
-    lang = guess_lang(view, path)
-
-    if settings_manager.get('codeintel_snippets', default=True, language=lang):
-        current_char = current_command[1]['characters'][-1] if current_command[0] == "insert" else ""
-
-        #instant snippets are possible if "\t" has been inserted OR if user has navigated through a snippet.
-        if current_command[0] == 'next_field' or current_char == '\t':
-            line = view.line(sublime.Region(pos - 1, pos))
-            backLine = sublime.Region(line.a, pos)
-            strippedLine = view.substr(backLine).rstrip()
-            last_nonwhite_char = strippedLine[-1:]
-            if last_nonwhite_char and last_nonwhite_char in "(,":
-                strippedLine = strippedLine if last_nonwhite_char == "(" else strippedLine+" "
-                view.run_command('replace_tab', {"strippedLine":strippedLine, "line_from":backLine.a, "line_to":backLine.b})
-                forms = ('calltips',)
-                caller = "instant_snippet"
-                #regain (changed) position
-                pos = view.sel()[0].end()
-                autocomplete(view, 0, settings_manager.sublime_auto_complete_delay, forms, False, args=[path, pos, lang], kwargs={"caller":caller})
-                return True
-
-    return False
-
 
 class PythonCodeIntel(sublime_plugin.EventListener):
     def on_activated(self, view):
@@ -1561,39 +1532,7 @@ class PythonCodeIntel(sublime_plugin.EventListener):
         autocomplete(view, 0, settings_manager.sublime_auto_complete_delay, forms, is_fill_char, args=[path, pos, lang], kwargs={"caller":caller})
 
     def on_selection_modified(self, view):
-        global despair, despaired, old_pos
-
-        view_sel = view.sel()
-
-        settings_manager.update()
-        if not codeintel_enabled() or not view_sel:
-            return
-
-        sel = view_sel[0]
-        pos = sel.end()
-
-        ##INSTANT SNIPPETS
-        current_command = view.command_history(0)
-        if current_command[0] == 'next_field' or current_command[0] == 'insert' and current_command[1]['characters'][-1] == "\t":
-            if instantSnippets(view, pos, current_command):
-                return
-
-        #if current_command[0] in ['move']:
-        #    delay_queue(600)  # on movement, delay queue (to make movement responsive)
-
-        #    rowcol = view.rowcol(pos)
-        #    if old_pos != rowcol:
-        #        vid = view.id()
-        #        old_pos = rowcol
-        #        despair = 1000
-        #        despaired = True
-        #        status_lock.acquire()
-        #        try:
-        #            slns = [sid for sid, sln in status_lineno.items() if sln != rowcol[0]]
-        #        finally:
-        #            status_lock.release()
-        #        for vid in slns:
-        #            set_status(view, "", lid=vid)
+        pass
 
     def on_query_completions(self, view, prefix, locations):
         vid = view.id()
