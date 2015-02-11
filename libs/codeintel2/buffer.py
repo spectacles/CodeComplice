@@ -172,7 +172,7 @@ class Buffer(object):
         This is generally a better place to implement trg_from_pos if this
         language's content can appear in a multi-language buffer (e.g. CSS).
         """
-        return self.langintel.trg_from_pos(self, pos, implicit, type=trigger_type)
+        return self.langintel.trg_from_pos(self, pos, implicit, trigger_type=trigger_type)
 
     def preceding_trg_from_pos(self, pos, curr_pos, trigger_type="both"):
         """Look back from the given position for a trigger point within
