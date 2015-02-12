@@ -1,17 +1,28 @@
 CodeComplice
 =================
 
-This Project started as a fork of the `SublimeCodeIntel <https://github.com/SublimeCodeIntel/SublimeCodeIntel>`_ plugin.
+This Project started as a fork of the [SublimeCodeIntel](https://github.com/SublimeCodeIntel/SublimeCodeIntel) plugin.
 I invested months of work to improve and refine the plugin and I intend to keep on doing so!
 If you're coming from the original SublimeCodeIntel, take a **close** look at the ``Configuring`` section below!
 
 ---------------------------------------
 
-Based on the open-source Code intelligence from `Open Komodo Editor <http://www.openkomodo.com/>`_.
+Based on the open-source Code intelligence from [Open Komodo Editor](http://www.openkomodo.com/).
 
-Supports all the languages Komodo Editor supports for Code Intelligence (CIX, CodeIntel2):
+Supported languages for Code Intelligence (CIX, CodeIntel2):
 
-    JavaScript, Mason, XBL, XUL, RHTML, SCSS, Python, HTML, Ruby, Python3, XML, Sass, XSLT, Django, HTML5, Perl, CSS, Twig, Less, Smarty, Node.js, Tcl, TemplateToolkit, PHP.
+    Python
+    Python3
+    Django
+    PHP
+    Perl
+    Ruby
+    JavaScript (Node.js basics)
+    CSS, SCSS, Sass
+
+other languages ported from Komodo but not revised:
+
+    HTML, HTML5, Mason, RHTML, Smarty, Tcl, TemplateToolkit, Twig, XBL, XML, XSLT, XUL
 
 Provides the following features:
 
@@ -25,7 +36,14 @@ Plugin should work in all three platforms (MacOS X, Windows and Linux).
 Installing
 ----------
 
-**Without Git:** Download the latest source from `GitHub <http://github.com/spectacles/CodeComplice3>`_ and copy the whole directory into the Packages directory.
+
+#### with [Sublime Package Control](http://wbond.net/sublime_packages/package_control)
+
+ 1. Open command pallet (default: `ctrl+shift+p`)
+ 2. Type `package control install` and select command `Package Control: Install Package`
+ 3. Type `complice` and select "CodeComplice"
+
+**Without Git:** Download the latest source from [GitHub](http://github.com/spectacles/CodeComplice) and copy the whole directory into the Packages directory.
 
 **With Git:** Clone the repository in your Sublime Text Packages directory, located somewhere in user's "Home" directory::
 
@@ -34,15 +52,15 @@ Installing
 
 The "Packages" packages directory is located differently in different platforms. To access the directory use:
 
-* OS X::
+##### OS X:
 
     Sublime Text -> Preferences -> Browse Packages...
 
-* Linux::
+##### Linux:
 
     Preferences -> Browse Packages...
 
-* Windows::
+##### Windows:
 
     Preferences -> Browse Packages...
 
@@ -52,19 +70,19 @@ Using
 
 * Start typing code as usual, autocomplete will pop up whenever it's available. CodeComplice will also allow you to jump around symbol definitions even across files with just a click ..and back.
 
-  For Mac OS X:
+  ***For Mac OS X:***
     * Jump to definition = ``Control+Click``
     * Jump to definition = ``Control+Command+Alt+Up``
     * Go back = ``Control+Command+Alt+Left``
     * Manual Code Intelligence = ``Control+Shift+space``
 
-  For Linux:
+  ***For Linux:***
     * Jump to definition = ``Super+Click``
     * Jump to definition = ``Control+Super+Alt+Up``
     * Go back = ``Control+Super+Alt+Left``
     * Manual Code Intelligence = ``Control+Shift+space``
 
-  For Windows:
+  ***For Windows:***
     * Jump to definition = ``Alt+Click``
     * Jump to definition = ``Control+Windows+Alt+Up``
     * Go back = ``Control+Windows+Alt+Left``
@@ -149,13 +167,13 @@ Troubleshooting
 
 To force re-indexation of the code intelligence database you need to follow these steps:
 
-* Close Sublime Text
++ Close Sublime Text
 
-* Open a terminal or navigate through your directories to find the database directory (default:``~/.codeintel``) that contains ``codeintel.log``, ``VERSION`` and the directory ``db``. In Windows, this should be at ``%userprofile%\.codeintel``.
++ Open a terminal or navigate through your directories to find the database directory (default:``~/.codeintel``) that contains ``codeintel.log``, ``VERSION`` and the directory ``db``. In Windows, this should be at ``%userprofile%\.codeintel``.
 
-* Delete the whole directory and all of its content.
++ Delete the whole directory and all of its content.
 
-* Start Sublime Text and enjoy a clean re-indexing!
++ Start Sublime Text and enjoy a clean re-indexing!
 
 
 License
