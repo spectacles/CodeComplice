@@ -95,6 +95,7 @@ if arch_path not in sys.path:
 cplns_were_empty = None
 last_trigger_name = None
 last_citdl_expr = None
+is_active_popup = False
 
 from codeintel2.common import CodeIntelError, EvalTimeout, LogEvalController, TRG_FORM_CPLN, TRG_FORM_CALLTIP, TRG_FORM_DEFN
 from codeintel2.manager import Manager
@@ -201,6 +202,8 @@ def tooltip_popup(view, snippets):
     completions[vid] = on_query_info
 
     def open_auto_complete():
+        global is_active_popup
+        is_active_popup = True
         view.run_command('auto_complete', {
             'disable_auto_insert': True,
             'api_completions_only': True,
@@ -496,8 +499,8 @@ def autocomplete(view, timeout, busy_timeout, forms, preemptive=False, args=[], 
         if not next_char or (next_char != '_' and not next_char.isalnum()):
             vid = view.id()
 
-            def _trigger(trigger, citdl_expr, calltips=None, cplns=None):
-                global cplns_were_empty, last_trigger_name, last_citdl_expr
+            def _trigger(trigger, calltips=None, cplns=None):
+                global cplns_were_empty
 
                 add_word_completions = settings_manager.get("codeintel_word_completions", language=lang)
 
@@ -508,31 +511,13 @@ def autocomplete(view, timeout, busy_timeout, forms, preemptive=False, args=[], 
                   if caller == "no-popup-on-empty-results":
                     return
 
-                if trigger:
-                    last_trigger_name = trigger.name
-                    log.debug("current triggername: %r" % trigger.name)
-                    print("current triggername: %r" % trigger.name)
-
                 if calltips:
                     tooltip(view, calltips, text_in_current_line, original_pos, lang, caller)
                     return
 
-                #under certain circumstances we have to close before reopening the currently open completions-panel
-
                 #completions are available now, but were empty on last round,
                 #we have to close and reopen the completions tab to show them
                 if cplns_were_empty and cplns is not None:
-                    view.run_command('hide_auto_complete')
-
-                #citdl_expr changed, so might the completions!
-                if citdl_expr != last_citdl_expr:
-                    if not (not citdl_expr and not last_citdl_expr):
-                        log.debug("hiding automplete-panel, b/c CITDL_EXPR CHANGED: FROM %r TO %r" % (last_citdl_expr, citdl_expr))
-                        view.run_command('hide_auto_complete')
-
-                #the trigger changed, so will the completions!
-                if (trigger is None and last_trigger_name is not None) or last_trigger_name != (trigger.name if trigger else None):
-                    log.debug("hiding automplete-panel, b/c trigger changed: FROM %r TO %r " % (last_trigger_name, (trigger.name if trigger else 'None') ))
                     view.run_command('hide_auto_complete')
 
                 api_completions_only = False
@@ -552,9 +537,6 @@ def autocomplete(view, timeout, busy_timeout, forms, preemptive=False, args=[], 
                         api_completions_only = True
                         add_word_completions = "None"
 
-                last_citdl_expr = citdl_expr
-
-
                 #if cplns is not None:
                 on_query_info = {}
                 on_query_info["params"] = ("cplns", add_word_completions, text_in_current_line, lang, trigger)
@@ -563,6 +545,8 @@ def autocomplete(view, timeout, busy_timeout, forms, preemptive=False, args=[], 
                 completions[vid] = on_query_info
 
                 def show_autocomplete():
+                    global is_active_popup
+                    is_active_popup = True
                     view.run_command('auto_complete', {
                         'disable_auto_insert': True,
                         'api_completions_only': api_completions_only,
@@ -893,7 +877,7 @@ def codeintel(view, path, content, lang, pos, forms, callback=None, timeout=7000
         cplns = None
         calltips = None
         defns = None
-        trg = None
+        trigger = None
 
 
         if not buf:
@@ -902,24 +886,24 @@ def codeintel(view, path, content, lang, pos, forms, callback=None, timeout=7000
 
         def get_trg(type, *args, **kwargs):
             try:
-                trg = getattr(buf, type, lambda *a: None)(*args, **kwargs)
+                trigger = getattr(buf, type, lambda *a: None)(*args, **kwargs)
             except CodeIntelError:
                 codeintel_log.exception("Exception! %s:%s (%s)" % (path or '<Unsaved>', pos, lang))
                 logger(view, 'info', "Error indexing! Please send the log file: '%s" % condeintel_log_filename)
-                trg = None
+                trigger = None
             except:
                 codeintel_log.exception("Exception! %s:%s (%s)" % (path or '<Unsaved>', pos, lang))
                 logger(view, 'info', "Error indexing! Please send the log file: '%s" % condeintel_log_filename)
                 raise
-            return trg
+            return trigger
 
         bpos = pos2bytes(content, pos)
         if 'calltips' in forms:
-            trg = get_trg('preceding_trg_from_pos', bpos, bpos, trigger_type="calltips")
-        if trg is None and 'cplns' in forms:
-            trg = get_trg('preceding_trg_from_pos', bpos, bpos, trigger_type="cplns")
+            trigger = get_trg('preceding_trg_from_pos', bpos, bpos, trigger_type="calltips")
+        if trigger is None and 'cplns' in forms:
+            trigger = get_trg('preceding_trg_from_pos', bpos, bpos, trigger_type="cplns")
         elif 'defns' in forms:
-            trg = get_trg('defn_trg_from_pos', bpos)
+            trigger = get_trg('defn_trg_from_pos', bpos)
 
         eval_log_stream = StringIO()
         _hdlrs = codeintel_log.handlers
@@ -928,14 +912,38 @@ def codeintel(view, path, content, lang, pos, forms, callback=None, timeout=7000
         codeintel_log.handlers = list(_hdlrs) + [hdlr]
         ctlr = LogEvalController(codeintel_log)
         try:
-            if trg and trg.form == TRG_FORM_CPLN:
-                cplns = buf.cplns_from_trg(trg, ctlr=ctlr, timeout=20)
-            if trg and trg.form == TRG_FORM_CALLTIP:
-                calltips = buf.calltips_from_trg(trg, ctlr=ctlr, timeout=20)
-            if trg and trg.form == TRG_FORM_DEFN:
-                defns = buf.defns_from_trg(trg, ctlr=ctlr, timeout=20)
+            global last_trigger_name, last_citdl_expr
+            trigger_changed = False
+
+            current_trigger_name = trigger.name if trigger else None
+            if current_trigger_name is not None:
+                log.info("current triggername: %r" % current_trigger_name)
+                print("current triggername: %r" % current_trigger_name)
+
+            #the trigger changed, so will the completions!
+            #if (trigger is None and last_trigger_name is not None) or last_trigger_name != (trigger.name if trigger else None):
+            if current_trigger_name != last_trigger_name:
+                log.debug("hiding automplete-panel, b/c trigger changed: FROM %r TO %r " % (last_trigger_name, (trigger.name if trigger else 'None') ))
+                trigger_changed = True
+                view.run_command('hide_auto_complete')
+
+            last_trigger_name = current_trigger_name
+
+            cancel_evaluation = not trigger_changed
+
+            if trigger and trigger.form == TRG_FORM_DEFN:
+                defns = buf.defns_from_trg(trigger, ctlr=ctlr, timeout=20)
+            if is_active_popup and cancel_evaluation:
+                log.debug("cancel trigger evaluation")
+                raise Exception
+            if trigger and trigger.form == TRG_FORM_CPLN:
+                cplns = buf.cplns_from_trg(trigger, ctlr=ctlr, timeout=20)
+            if trigger and trigger.form == TRG_FORM_CALLTIP:
+                calltips = buf.calltips_from_trg(trigger, ctlr=ctlr, timeout=20)
         except EvalTimeout:
             logger(view, 'info', "Timeout while resolving completions!")
+        except:
+            pass
         finally:
             codeintel_log.handlers = _hdlrs
         logger(view, 'warning', "")
@@ -958,13 +966,8 @@ def codeintel(view, path, content, lang, pos, forms, callback=None, timeout=7000
                     set_status(view, 'warning', msg)
                     result = True
 
-        ##collect citdl_expr from this run
-        citdl_expr = buf.last_citdl_expr
-
-
         ret = {
-            "trigger": trg,
-            "citdl_expr": citdl_expr
+            "trigger": trigger
         }
 
         for f in forms:
@@ -1432,6 +1435,11 @@ class PythonCodeIntel(sublime_plugin.EventListener):
         if codeintel_enabled():
             sublime.set_timeout(settings_manager.checkProjectFileChanged, 100)
 
+    def on_text_command(self, window, command_name, args):
+      global is_active_popup, last_trigger_name
+      if command_name not in ["insert"]:
+        is_active_popup = False
+
     #rescan a buffer on_pre_save, if it is dirty
     def on_pre_save(self, view):
         settings_manager.update()
@@ -1509,7 +1517,7 @@ class PythonCodeIntel(sublime_plugin.EventListener):
 
                 elif current_command[0] == 'commit_completion':
                     #don't offer the same calltip twice in a row
-                    if "calltip" in last_trigger_name:
+                    if last_trigger_name and "calltip" in last_trigger_name:
                         return
                     forms = ('calltips',)
 
@@ -1524,6 +1532,11 @@ class PythonCodeIntel(sublime_plugin.EventListener):
         if current_char in ["\n","\t"]:
             view.run_command('hide_auto_complete')
             return
+
+        if current_char in [" "]:
+            #since completions are single "words", popup will close on whitespace
+            global is_active_popup
+            is_active_popup = False
 
         is_fill_char = (current_char and current_char in cpln_fillup_chars.get(lang, ''))
         is_stop_char = (current_char and current_char in cpln_stop_chars.get(lang, ''))
