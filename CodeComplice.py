@@ -140,6 +140,7 @@ for logger in ('citadel', 'css', 'django', 'html', 'html5', 'javascript', 'mason
 #no live completions for these
 cpln_stop_chars = {
     'CSS': " ('\";{},.>/",
+    'Go': "~`!@#$%^&*()-=+{}[]|\\;:'\",<>?/",
     'JavaScript': "~`!@#%^&*()-=+{}[]|\\;:'\",<>?/",
     'Perl': "-~`!@#$%^&*()=+{}[]|\\;:'\",.<>?/",
     'PHP': "~`@%^&*=+{}]|;.<?/",
@@ -390,6 +391,7 @@ def guess_lang(view=None, path=None, sublime_scope=None):
     ##try to guess lang using sublime scope
 
     source_scopes = {
+        "go": "Go",
         "js": "JavaScript",
         "json": "JSON",
         "perl": "Perl",
