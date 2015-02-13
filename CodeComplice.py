@@ -393,6 +393,7 @@ def guess_lang(view=None, path=None, sublime_scope=None):
 
     source_scopes = {
         "js": "JavaScript",
+        "go": "Go", 
         "json": "JSON",
         "perl": "Perl",
         "php": "PHP",
