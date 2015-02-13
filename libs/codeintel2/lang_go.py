@@ -324,11 +324,9 @@ class GoLangIntel(CitadelLangIntel,
         cmd = [gocode_path, '-f=json', 'autocomplete', buf.path, '%s' % pos]
         log.debug("running [%s]", cmd)
         try:
-            env_vars = env.get_all_envvars()
-            env_vars["GOPATH"] = os.path.expanduser(env_vars["GOPATH"])
-            p = process.ProcessOpen(cmd, env=env_vars)
+            p = process.ProcessOpen(cmd, env=env.get_all_envvars())
         except OSError as e:
-            log.error("Errorsss executing '%s': %s", cmd[0], e)
+            log.error("Error executing '%s': %s", cmd[0], e)
             return
 
         acc_text = buf.accessor.text

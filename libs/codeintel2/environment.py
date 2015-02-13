@@ -98,7 +98,9 @@ class Environment(object):
 
     def get_all_envvars(self):
         """Return a dictionary of all environment variables."""
-        return dict(self.environ)
+        all_envvars = dict(self.environ)
+        all_envvars["GOPATH"] = os.path.expanduser(all_envvars["GOPATH"])
+        return all_envvars
 
     def has_pref(self, name):
         """Return True if the named pref exists."""
