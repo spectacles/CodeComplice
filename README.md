@@ -11,6 +11,7 @@ Based on the open-source Code intelligence from [Open Komodo Editor](http://www.
 
 Supported languages for Code Intelligence (CIX, CodeIntel2):
 
+    Go
     Python
     Python3
     Django
@@ -174,6 +175,26 @@ To force re-indexation of the code intelligence database you need to follow thes
 + Delete the whole directory and all of its content.
 
 + Start Sublime Text and enjoy a clean re-indexing!
+
+
+What's New
+----------
+
+v1.1.0 (2015-02-15):
+
++ added support for golang. ported from [komodo-go](https://github.com/Komodo/komodo-go)
+
++ avoid unnecessary trigger evaluation
+    this will be a appreciable speedup on older systems
+
+
+v1.0.6 (2015-02-11):
+
++ [this](https://github.com/SublimeCodeIntel/SublimeCodeIntel/issues/477) is now working
+
++ Python Trigger complete-local-symbols (the full way, not the SublimeCodeIntel way!)
+
++ usability tweaks
 
 
 License

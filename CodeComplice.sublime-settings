@@ -126,7 +126,7 @@
         },
         "Go": {
             "env": {
-                "GOPATH": "~/gocode"
+                "GOPATH": "$GOPATH"
             },
             "go": "/usr/local/go/bin/go",
             "gocode": "~/gocode/bin/gocode",
