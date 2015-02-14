@@ -373,7 +373,7 @@ class GoLangIntel(CitadelLangIntel,
 
     def get_go_exe(self, env):
         golang_path = env.get_pref("go", "")
-        if golang_path:
+        if golang_path and os.path.exists(os.path.expanduser(golang_path)):
             return golang_path
         path = [d.strip()
                 for d in env.get_envvar("PATH", "").split(os.pathsep)
@@ -388,7 +388,7 @@ class GoLangIntel(CitadelLangIntel,
         # Then try which
         # Finally try relative to the golang executable
         tool_path = env.get_pref(tool_name, "")
-        if tool_path and os.path.exists(tool_path):
+        if tool_path and os.path.exists(os.path.expanduser(tool_path)):
             return tool_path
         path = [d.strip()
                 for d in env.get_envvar("PATH", "").split(os.pathsep)
