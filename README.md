@@ -11,6 +11,7 @@ Based on the open-source Code intelligence from [Open Komodo Editor](http://www.
 
 Supported languages for Code Intelligence (CIX, CodeIntel2):
 
+    Go
     Python
     Python3
     Django
@@ -178,6 +179,14 @@ To force re-indexation of the code intelligence database you need to follow thes
 
 What's New
 ----------
+
+v1.1.0 (2015-02-15):
+
++ added support for golang. ported from [komodo-go](https://github.com/Komodo/komodo-go)
+
++ avoid unnecessary trigger evaluation
+    this will be a appreciable speedup on older systems
+
 
 v1.0.6 (2015-02-11):
 
