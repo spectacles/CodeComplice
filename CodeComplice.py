@@ -912,7 +912,7 @@ def codeintel(view, path, content, lang, pos, forms, callback=None, timeout=7000
         codeintel_log.handlers = list(_hdlrs) + [hdlr]
         ctlr = LogEvalController(codeintel_log)
         try:
-            global last_trigger_name, last_citdl_expr
+            global last_trigger_name, last_citdl_expr, is_active_popup
             trigger_changed = False
 
             current_trigger_name = trigger.name if trigger else None
@@ -925,7 +925,9 @@ def codeintel(view, path, content, lang, pos, forms, callback=None, timeout=7000
             if current_trigger_name != last_trigger_name:
                 log.debug("hiding automplete-panel, b/c trigger changed: FROM %r TO %r " % (last_trigger_name, (trigger.name if trigger else 'None') ))
                 trigger_changed = True
-                view.run_command('hide_auto_complete')
+                if is_active_popup:
+                    is_active_popup = False
+                    view.run_command('hide_auto_complete')
 
             last_trigger_name = current_trigger_name
 
@@ -1039,7 +1041,7 @@ def generateEnvironment(mgr, lang, folders):
     config["codeintel_scan_extra_dir"] = scan_extra_dir
 
     for conf, p in config.items():
-        if isinstance(p, str) and p.startswith('~'):
+        if isinstance(p, unicode) and p.startswith('~'):
             config[conf] = os.path.expanduser(p)
 
     # Setup environment variables
@@ -1435,11 +1437,6 @@ class PythonCodeIntel(sublime_plugin.EventListener):
         if codeintel_enabled():
             sublime.set_timeout(settings_manager.checkProjectFileChanged, 100)
 
-    def on_text_command(self, window, command_name, args):
-      global is_active_popup, last_trigger_name
-      if command_name not in ["insert"]:
-        is_active_popup = False
-
     #rescan a buffer on_pre_save, if it is dirty
     def on_pre_save(self, view):
         settings_manager.update()
@@ -1509,6 +1506,8 @@ class PythonCodeIntel(sublime_plugin.EventListener):
         current_command = view.command_history(0)
 
         if current_command[0] not in ['insert']:
+            global is_active_popup
+            is_active_popup = False
             view.run_command('hide_auto_complete')
             #show subsequent calltips instantly, if appropriate
             if current_command[0] in ['commit_completion','insert_snippet']:
