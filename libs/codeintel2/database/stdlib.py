@@ -530,7 +530,9 @@ class StdLibsZone(object):
             retval = p.wait()
             if retval:
                 raise OSError("error running '%s'" % cmd)
-            cix_path += ".cix"
+            os.remove(cix_path+".zip")
+
+        cix_path += ".cix"
 
         # Need to acquire db lock, as the indexer and main thread may both be
         # calling into _update_lang_with_ver at the same time.
