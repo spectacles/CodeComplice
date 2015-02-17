@@ -300,11 +300,13 @@ class StdLibsZone(object):
         vers_and_names = self._vers_and_names_from_lang.get(lang)
         if vers_and_names is None:
             # Find the available stdlibs for this language.
-            cix_glob = join(
-                self.stdlibs_dir, safe_lang_from_lang(lang)+"*.cix")
+            cix_glob = join(self.stdlibs_dir, safe_lang_from_lang(lang)+"*.cix")
+            zip_glob = join(self.stdlibs_dir, safe_lang_from_lang(lang)+"*.zip")
             cix_paths = glob(cix_glob)
+            zip_paths = glob(zip_glob)
+
             vers_and_names = []
-            for cix_path in cix_paths:
+            for cix_path in (cix_paths+zip_paths):
                 name = splitext(basename(cix_path))[0]
                 if '-' in name:
                     base, ver_str = name.split('-', 1)
@@ -512,10 +514,23 @@ class StdLibsZone(object):
         if ver is not None:
             ver_str = ".".join(map(str, ver))
             cix_path = join(self.stdlibs_dir,
-                            "%s-%s.cix" % (safe_lang_from_lang(lang), ver_str))
+                            "%s-%s" % (safe_lang_from_lang(lang), ver_str))
         else:
             cix_path = join(self.stdlibs_dir,
-                            "%s.cix" % (safe_lang_from_lang(lang), ))
+                            "%s" % (safe_lang_from_lang(lang), ))
+
+        #check for zip-files
+        if os.path.exists(cix_path+".zip"):
+            import which
+            import process
+            unzip_exe = which.which("unzip")
+            cmd = '"%s" -q -d "%s" "%s"' % (unzip_exe, self.stdlibs_dir, cix_path+".zip")
+            p = process.ProcessOpen(cmd, stdin=None)
+            stdout, stderr = p.communicate()
+            retval = p.wait()
+            if retval:
+                raise OSError("error running '%s'" % cmd)
+            cix_path += ".cix"
 
         # Need to acquire db lock, as the indexer and main thread may both be
         # calling into _update_lang_with_ver at the same time.
