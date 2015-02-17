@@ -1638,7 +1638,7 @@ class GotoPythonDefinition(sublime_plugin.TextCommand):
             content = view.substr(sublime.Region(0, view.size()))
             file_name = view.file_name()
 
-            def _trigger(trigger, citdl_expr, defns):
+            def _trigger(trigger, defns, citdl_expr=None):
                 if defns is not None:
                     defn = defns[0]
                     if defn.name and defn.doc:
