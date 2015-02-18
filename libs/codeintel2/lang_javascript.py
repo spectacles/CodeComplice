@@ -570,13 +570,13 @@ class JavaScriptLangIntel(CitadelLangIntel,
         if pos != curr_pos and self._last_trg_type == "names":
             # The last trigger type was a 3-char trigger "names", we must try
             # triggering from the same point as before to get other available
-            # trigger types defined at the same poisition or before.
+            # trigger types defined at the same position or before.
             trg = ProgLangTriggerIntelMixin.preceding_trg_from_pos(
-                self, buf, pos+2, curr_pos, preceding_trg_terminators,
+                self, buf, pos+2, curr_pos, preceding_trg_terminators, trigger_type=trigger_type,
                 DEBUG=DEBUG)
         else:
             trg = ProgLangTriggerIntelMixin.preceding_trg_from_pos(
-                self, buf, pos, curr_pos, preceding_trg_terminators,
+                self, buf, pos, curr_pos, preceding_trg_terminators, trigger_type=trigger_type,
                 DEBUG=DEBUG)
 
         # Now try the 3-char trigger, if we get two triggers, take the closest
