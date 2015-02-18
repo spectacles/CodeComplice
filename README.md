@@ -180,6 +180,19 @@ To force re-indexation of the code intelligence database you need to follow thes
 What's New
 ----------
 
+v1.1.1 (2015-02-18):
+
++ zipping stdlibs, reducing plugin size by 2/3.
+
++ JavaScript: adjust minimal trigger length from 4 to 3 chars.
+
++ remove extensive JavaScript info logging -> speedup
+
++ separate trigger_types in JavaScript -> speedup
+
++ fix doublettes in JavaScript calltips
+
+
 v1.1.0 (2015-02-15):
 
 + added support for golang. ported from [komodo-go](https://github.com/Komodo/komodo-go)

@@ -1,4 +1,4 @@
-CodeComplice v1.1.0 Release Notes
+CodeComplice v1.1.1 Release Notes
 =====================================
 
 
