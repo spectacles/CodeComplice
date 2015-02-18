@@ -1,0 +1,13 @@
+CodeComplice v1.1.0 Release Notes
+=====================================
+
+
+CHANGES/FIXES
+-------------
+v1.1.1 (2015-02-18):
+
++ JavaScript: adjust minimal trigger length from 4 to 3 chars.
+
++ remove extensive JavaScript info logging -> speedup
+
++ fix doublettes in JavaScript calltips
