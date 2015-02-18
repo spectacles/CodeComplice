@@ -1,0 +1,12 @@
+CodeComplice v1.1.0 Release Notes
+=====================================
+
+
+CHANGES/FIXES
+-------------
+v1.1.0 (2015-02-15):
+
++ added support for golang. ported from [komodo-go](https://github.com/Komodo/komodo-go)
+
++ avoid unnecessary trigger evaluation
+    this will be a appreciable speedup on older systems
