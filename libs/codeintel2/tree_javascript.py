@@ -886,7 +886,8 @@ class JavaScriptTreeEvaluator(CandidatesForTreeEvaluator):
                     break
             if elem is not None:
                 if not hits or nconsumed == 1:
-                    hits.insert(0, (elem, scoperef))
+                    if (elem, scoperef) not in hits:
+                        hits.insert(0, (elem, scoperef))
                     nconsumed = 1
                 else:
                     # Hits were found in the libs that are deeper than
