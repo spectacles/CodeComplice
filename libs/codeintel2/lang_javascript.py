@@ -598,7 +598,7 @@ class JavaScriptLangIntel(CitadelLangIntel,
                 ac = AccessorCache(accessor, pos)
                 prev_pos, prev_ch, prev_style = ac.getPrecedingPosCharStyle(
                     style)
-                if prev_style is not None and (pos - prev_pos) > 3:
+                if prev_style is not None and (pos - prev_pos) >= 3:
                     # We need at least 3 character for proper completion
                     # handling.
                     names_trigger = self.trg_from_pos(
