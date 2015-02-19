@@ -1253,6 +1253,9 @@ class SettingsManager():
                     if self._settings.get("codeintel_live"):
                         return language in self._settings["codeintel_enabled_languages"]
 
+        if config_key == "codeintel_database_dir":
+            return os.path.realpath(self._settings.get(config_key, default))
+
         return self._settings.get(config_key, default)
 
     def getSettings(self, lang=None):
