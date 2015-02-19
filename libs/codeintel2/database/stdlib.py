@@ -521,16 +521,15 @@ class StdLibsZone(object):
 
         #check for zip-files
         if os.path.exists(cix_path+".zip"):
-            import which
-            import process
-            unzip_exe = which.which("unzip")
-            cmd = '"%s" -q -d "%s" "%s"' % (unzip_exe, self.stdlibs_dir, cix_path+".zip")
-            p = process.ProcessOpen(cmd, stdin=None)
-            stdout, stderr = p.communicate()
-            retval = p.wait()
-            if retval:
-                raise OSError("error running '%s'" % cmd)
-            os.remove(cix_path+".zip")
+            import zipfile
+            try:
+                zip_file = zipfile.ZipFile(cix_path+".zip")
+                zip_file.extractall(path=self.stdlibs_dir)
+            except Exception as ex:
+                print(ex)
+                raise CodeIntelError("could not unzip stdlib")
+            finally:
+                os.remove(cix_path+".zip")
 
         cix_path += ".cix"
 
