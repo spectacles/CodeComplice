@@ -526,7 +526,7 @@ class StdLibsZone(object):
                 zip_file = zipfile.ZipFile(cix_path+".zip")
                 zip_file.extractall(path=self.stdlibs_dir)
                 zip_file.close()
-            except Exception as ex:
+            except Exception, ex:
                 raise CodeIntelError("could not unzip stdlib")
             finally:
                 os.remove(cix_path+".zip")
