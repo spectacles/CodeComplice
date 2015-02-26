@@ -806,6 +806,25 @@ class PHPLangIntel(CitadelLangIntel, ParenStyleCalltipIntelMixin,
                     if citdl_expr \
                        and (_isident(citdl_expr[-1]) or citdl_expr[-1] == '\\') \
                        and (_isident(ch) or _isdigit(ch)):
+
+                        if (style == self.keyword_style):
+                            p, text = ac.getTextBackWithStyle(style, self.comment_styles, max_text_len=len("implements"))
+
+                            if text == "implements" and p > buf.orig_pos:
+                                #if we clicked before "implements" it is not an interface we are looking for
+                                ac.resetToPosition(p-2)
+                                i, ch, style = ac.getCurrentPosCharStyle()
+
+                                ##find the prevoius identifier (possibly an extended class)
+                                p, identifier = ac.getTextBackWithStyle(style, self.comment_styles_or_whitespace)
+
+                                while style != self.keyword_style:
+                                    i, ch, style = ac.getPrecedingPosCharStyle(style, self.comment_styles_or_whitespace)
+
+                                p, text = ac.getTextBackWithStyle(style, self.comment_styles, max_text_len=len("implements"))
+                                if text == "extends":
+                                    citdl_expr = list(identifier.strip()[::-1])
+
                         if DEBUG:
                             print("stop at (likely?) start of keyword or "\
                                   "declaration: %r" % ch)
