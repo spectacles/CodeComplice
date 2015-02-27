@@ -198,7 +198,7 @@ class SilverCityAccessor(Accessor):
         # XXX Locality of reference should offer an optimization here.
         # Binary search for appropriate token.
         lower, upper = 0, len(self.tokens) - 1  # [lower-limit, upper-limit)
-        sentinel = 15
+        sentinel = 20
         while sentinel > 0:
             idx = ((upper - lower) // 2) + lower
             token = self.tokens[idx]
