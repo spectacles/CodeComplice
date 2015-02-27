@@ -614,10 +614,8 @@ class JavaScriptLangIntel(CitadelLangIntel,
                 trg = names_trigger
             # Two triggers, choose the best one.
             elif trg.pos == names_trigger.pos:
-                if self._last_trg_type != "names":
-                    # The names trigger gets priority over the other trigger
-                    # types, unless the previous trigger was also a names trg.
-                    trg = names_trigger
+                # The names trigger gets priority over the other trigger
+                trg = names_trigger
             elif trg.pos < names_trigger.pos:
                 trg = names_trigger
 
