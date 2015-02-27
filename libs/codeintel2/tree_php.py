@@ -275,7 +275,7 @@ class PHPTreeEvaluator(TreeEvaluator):
                 if classref:
                     celem, iscoperef = self._hit_from_citdl(
                         classref, start_scope)
-                    if celem is not None and "abstract" in celem.get("attributes"):
+                    if celem is not None and celem.get("attributes") and "abstract" in celem.get("attributes"):
                         ref_elems.append(celem)
 
                 interfacerefs = elem.get("interfacerefs", "").split()
@@ -310,11 +310,8 @@ class PHPTreeEvaluator(TreeEvaluator):
                             m = search(r'([^\s]+)\(([^\[\(\)]*)', signature)
                             if m:
                                 method_name = m.group(1)
-                                params = m.group(2).split(',')
-                                params = [p.partition("$")[1]+p.partition("$")[2] for p in params]
-                                joined_params = ", ".join(params)
-                                clean_signature = method_name+"("+joined_params+")"
 
+                                clean_signature = method_name+"("+m.group(2)+")"
                             completion_text += "\n%s%s function %s\n{\n\n}\n" % (docstring, attributes, clean_signature)
                     completions.append(("%s %s" % (ref_elem.get("attributes"), ref_elem.get("ilk")), ref_elem.get("name")+"$$$"+completion_text))
 
