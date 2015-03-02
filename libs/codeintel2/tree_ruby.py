@@ -182,6 +182,10 @@ class RubyTreeEvaluator(TreeEvaluatorHelper):
         self._hit_helper = HitHelper()
         self._get_current_names = trg.type == "names"
         self._framework_role = buf.framework_role or ""
+        for cat in buf._env.get_pref("codeintel_selected_catalogs"):
+            #check if "rails"-catalog is selected
+            if cat.lower() == "rails":
+                self._framework_role = "rails.models"
 
     recursion_check_limit = 10
 
