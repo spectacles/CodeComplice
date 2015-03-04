@@ -1199,7 +1199,7 @@ class RubyLangIntel(CitadelLangIntel,
         pos is marked by "<$>"
         curr_pos indicated by "<|>"
         """
-
+        DEBUG = False
         styleClassifierClass = (isinstance(buf, UDLBuffer) and _UDLStyleClassifier
                                 or _RubyStyleClassifier)
         preceding_trg_terminators = None
@@ -1208,6 +1208,7 @@ class RubyLangIntel(CitadelLangIntel,
         trg = ProgLangTriggerIntelMixin.preceding_trg_from_pos(
             self, buf, pos, curr_pos,
             preceding_trg_terminators=preceding_trg_terminators,
+            trigger_type=trigger_type,
             DEBUG=DEBUG)
         if trg is not None:
             return trg
