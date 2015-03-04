@@ -10,22 +10,41 @@
         <scope doc="Call the progressCallbacks on a Deferred object with the given context and args." ilk="function" name="notifyWith" signature="notifyWith(context, args)" returns="DeferredClass" />
         <scope doc="Utility method to filter and/or chain Deferreds." ilk="function" name="pipe" signature="pipe(doneFilter, failFilter)" returns="PromiseClass" />
         <scope doc="Add handlers to be called when the Deferred object generates progress notifications." ilk="function" name="progress" signature="progress(progressCallbacks, progressCallbacks)" returns="DeferredClass" />
-        <scope doc="Return a Deferred&amp;#8217;s Promise object." ilk="function" name="promise" signature="promise(target)" returns="DeferredClass" />
+        <scope doc="Return a Deferred&amp;#8217;s Promise object." ilk="function" name="promise" signature="promise(target)" returns="PromiseClass" />
         <scope doc="Reject a Deferred object and call any failCallbacks with the given args." ilk="function" name="reject" signature="reject(args)" returns="DeferredClass" />
         <scope doc="Reject a Deferred object and call any failCallbacks with the given context and args." ilk="function" name="rejectWith" signature="rejectWith(context, args)" returns="DeferredClass" />
         <scope doc="Resolve a Deferred object and call any doneCallbacks with the given args." ilk="function" name="resolve" signature="resolve(args)" returns="DeferredClass" />
         <scope doc="Resolve a Deferred object and call any doneCallbacks with the given context and args." ilk="function" name="resolveWith" signature="resolveWith(context, args)" returns="DeferredClass" />
-        <scope doc="Determine the current state of a Deferred object." ilk="function" name="state" signature="state()" returns="string" />
+        <scope doc="Determine the current state of a Deferred object." ilk="function" name="state" signature="state()" returns="String" />
         <scope doc="Add handlers to be called when the Deferred object is resolved, rejected, or still in progress." ilk="function" name="then" signature="then(doneFilter, failFilter, progressFilter)" returns="PromiseClass" />
       </scope>
       <scope ilk="class" name="PromiseClass" >
         <scope doc="Add handlers to be called when the Deferred object is resolved, rejected, or still in progress." ilk="function" name="then" signature="then(doneFilter, failFilter, progressFilter)" returns="PromiseClass" />
-        <scope doc="Add handlers to be called when the Deferred object is resolved." ilk="function" name="done" signature="done(doneCallbacks, doneCallbacks)" returns="DeferredClass" />
-        <scope doc="Add handlers to be called when the Deferred object is rejected." ilk="function" name="fail" signature="fail(failCallbacks, failCallbacks)" returns="DeferredClass" />
-        <scope doc="Add handlers to be called when the Deferred object is either resolved or rejected." ilk="function" name="always" signature="always(alwaysCallbacks, alwaysCallbacks)" returns="DeferredClass" />
+        <scope doc="Add handlers to be called when the Deferred object is resolved." ilk="function" name="done" signature="done(doneCallbacks, doneCallbacks)" returns="PromiseClass" />
+        <scope doc="Add handlers to be called when the Deferred object is rejected." ilk="function" name="fail" signature="fail(failCallbacks, failCallbacks)" returns="PromiseClass" />
+        <scope doc="Add handlers to be called when the Deferred object is either resolved or rejected." ilk="function" name="always" signature="always(alwaysCallbacks, alwaysCallbacks)" returns="PromiseClass" />
         <scope doc="Utility method to filter and/or chain Deferreds." ilk="function" name="pipe" signature="pipe(doneFilter, failFilter)" returns="PromiseClass" />
-        <scope doc="Add handlers to be called when the Deferred object generates progress notifications." ilk="function" name="progress" signature="progress(progressCallbacks, progressCallbacks)" returns="DeferredClass" />
+        <scope doc="Add handlers to be called when the Deferred object generates progress notifications." ilk="function" name="progress" signature="progress(progressCallbacks, progressCallbacks)" returns="PromiseClass" />
         <scope doc="Determine the current state of a Deferred object." ilk="function" name="state" signature="state()" returns="string" />
+      </scope>
+      <scope ilk="class" name="jqXHR" >
+        <scope doc="Add handlers to be called when the Deferred object is resolved, rejected, or still in progress." ilk="function" name="then" signature="then(doneFilter, failFilter, progressFilter)" returns="jqXHR" />
+        <scope doc="Add handlers to be called when the Deferred object is resolved." ilk="function" name="done" signature="done(doneCallbacks, doneCallbacks)" returns="jqXHR" />
+        <scope doc="Add handlers to be called when the Deferred object is rejected." ilk="function" name="fail" signature="fail(failCallbacks, failCallbacks)" returns="jqXHR" />
+        <scope doc="Add handlers to be called when the Deferred object is either resolved or rejected." ilk="function" name="always" signature="always(alwaysCallbacks, alwaysCallbacks)" returns="jqXHR" />
+        <scope doc="Utility method to filter and/or chain Deferreds." ilk="function" name="pipe" signature="pipe(doneFilter, failFilter)" returns="jqXHR" />
+        <scope doc="Add handlers to be called when the Deferred object generates progress notifications." ilk="function" name="progress" signature="progress(progressCallbacks, progressCallbacks)" returns="jqXHR" />
+        <scope doc="Determine the current state of a Deferred object." ilk="function" name="state" signature="state()" returns="string" />
+        <variable doc="" name="readyState" />
+        <variable doc="" name="status" />
+        <variable doc="" name="statusText" />
+        <variable doc="" name="responseXML" />
+        <variable doc="" name="responseText" />
+        <scope ilk="function" name="setRequestHeader" />
+        <scope ilk="function" name="getAllResponseHeaders" />
+        <scope ilk="function" name="getResponseHeader" />
+        <scope ilk="function" name="statusCode" />
+        <scope ilk="function" name="abort" />
       </scope>
       <scope ilk="class" name="jQuery">
         <scope attributes="__ctor__" doc="String: Create DOM elements on-the-fly from the provided String of raw HTML.&#xA;Element|Array: Wrap jQuery functionality around single or multiple DOM Element(s).&#xA;Function: To be executed when the DOM document has finished loading.&#xA;&#xA;If &apos;context&apos; is specified, accepts a string containing a CSS or basic XPath selector&#xA;which is then used to match a set of elements." ilk="function" name="jQuery" signature="jQuery(arg &lt;String|Element|Array of Elements|Function|jQuery&gt;, context &lt;Element|jQuery&gt;) -&gt; jQuery" />
@@ -802,7 +821,7 @@
           <variable citdl="Element" doc="A DOM node or jQuery object indicating where to stop matching preceding sibling elements. " ilk="argument" name="element" />
           <variable citdl="Selector" doc="A string containing a selector expression to match elements against. " ilk="argument" name="filter" />
         </scope>
-        <scope doc="Return a Promise object to observe when all actions of a&#xA;certain type bound to the collection, queued or not, have&#xA;finished." ilk="function" name="promise" returns="Promise" signature="promise(type, target) -&gt; Promise">
+        <scope doc="Return a Promise object to observe when all actions of a&#xA;certain type bound to the collection, queued or not, have&#xA;finished." ilk="function" name="promise" returns="PromiseClass" signature="promise(type, target) -&gt; Promise">
           <variable citdl="String" doc="The type of queue that needs to be observed. " ilk="argument" name="type" />
           <variable citdl="PlainObject" doc="Object onto which the promise methods have to be attached " ilk="argument" name="target" />
         </scope>
