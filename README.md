@@ -48,7 +48,7 @@ Installing
 
 **With Git:** Clone the repository in your Sublime Text Packages directory, located somewhere in user's "Home" directory::
 
-    git clone git://github.com/spectacles/CodeComplice3.git
+    git clone git://github.com/spectacles/CodeComplice.git
 
 
 The "Packages" packages directory is located differently in different platforms. To access the directory use:
