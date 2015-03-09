@@ -138,6 +138,10 @@
             "codeintel_scan_files_in_project": false,
             "codeintel_selected_catalogs": ["jQuery"]
         },
+        "Ruby": {
+            "Ruby": "/usr/bin/ruby",
+            "codeintel_selected_catalogs": ["rails"]
+        },
         "PHP": {
             "php": "/Applications/MAMP/bin/php/php5.5.3/bin/php",
             "codeintel_scan_extra_dir": [],
