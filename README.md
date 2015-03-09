@@ -180,6 +180,16 @@ To force re-indexation of the code intelligence database you need to follow thes
 What's New
 ----------
 
+v1.1.2 (2015-03-09):
+
++ fix Ruby support and Rails catalog
+
++ improve working with very large buffers (>10000 lines)
+
++ PHP: fix goto_defn of extended class, if interface is also implemented
+
++ JS: improve jQuery catalog with Deferred, Promise and jqXHR objects
+
 v1.1.1 (2015-02-18):
 
 + zipping stdlibs, reducing plugin size by 2/3.
