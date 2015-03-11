@@ -39,22 +39,101 @@
 """Code Intelligence: utility functions"""
 
 import bisect
-import os
-from os.path import basename
-import sys
-import re
-import stat
-import textwrap
-import logging
-import types
-from pprint import pprint, pformat
-import time
 import codecs
+import logging
+import os
+import re
+import shutil
+import stat
+import sublime
+import sys
+import textwrap
+import time
+import types
+from os.path import basename
+from pprint import pprint, pformat
 
 # Global dict for holding specific hotshot profilers
 hotshotProfilers = {}
 
 #---- general stuff
+
+
+def install_completion_rules():
+    """Asynchronously call install_rules_async."""
+    sublime.set_timeout_async(install_completion_rules_async, 0)
+
+
+def install_completion_rules_async():
+    """
+    Install fixed rules packages.
+
+
+    This method copies all of the rule packages in fixed_rules to Packages
+    so that they override the built in rule package.
+
+    """
+
+    plugin_dir = os.path.dirname(os.path.dirname(__file__))
+    rules_dir = os.path.join(plugin_dir, 'fixed-rules')
+
+    for rule in os.listdir(rules_dir):
+        # See if our version of the rules already exists in Packages
+        src_dir = os.path.join(rules_dir, rule)
+        version_file = os.path.join(src_dir, 'codecomplice.version')
+
+        if not os.path.isdir(src_dir) or not os.path.isfile(version_file):
+            continue
+
+        with open(version_file, encoding='utf8') as f:
+            my_version = int(f.read().strip())
+
+        dest_dir = os.path.join(sublime.packages_path(), rule)
+        version_file = os.path.join(dest_dir, 'codecomplice.version')
+
+        if os.path.isdir(dest_dir):
+            if os.path.isfile(version_file):
+                with open(version_file, encoding='utf8') as f:
+                    try:
+                        other_version = int(f.read().strip())
+                    except ValueError:
+                        other_version = 0
+
+                #persist.debug('found existing {} rule, version {}'.format(rule, other_version))
+                copy = my_version > other_version
+            else:
+                copy = sublime.ok_cancel_dialog(
+                    'An existing {} rule definition exists, '.format(rule) +
+                    'and codecomplice wants to overwrite it with its own version. ' +
+                    'Is that okay?')
+
+        else:
+            copy = True
+
+        if copy:
+            copy_rule(rule, src_dir, my_version, dest_dir)
+
+
+
+def copy_rule(rule, src_dir, version, dest_dir):
+    """Copy a customized rule and related files to Packages."""
+
+
+    try:
+        cached = os.path.join(sublime.cache_path(), rule)
+
+        if os.path.isdir(cached):
+            shutil.rmtree(cached)
+
+        if not os.path.exists(dest_dir):
+            os.mkdir(dest_dir)
+
+        for filename in os.listdir(src_dir):
+            new_filename = "Completion Rules.tmPreferences" if filename == "Rules" else filename
+            shutil.copy2(os.path.join(src_dir, filename), os.path.join(dest_dir, new_filename))
+
+    except OSError:
+       pass
 
 
 def isident(char):

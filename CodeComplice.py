@@ -98,7 +98,7 @@ is_active_popup = False
 from codeintel2.common import CodeIntelError, EvalTimeout, LogEvalController, TRG_FORM_CPLN, TRG_FORM_CALLTIP, TRG_FORM_DEFN
 from codeintel2.manager import Manager
 from codeintel2.environment import SimplePrefsEnvironment
-from codeintel2.util import guess_lang_from_path
+from codeintel2.util import guess_lang_from_path, install_completion_rules
 
 
 QUEUE = {}  # views waiting to be processed by codeintel
@@ -174,6 +174,11 @@ status_lock = threading.Lock()
 
 HISTORY_SIZE = 64
 jump_history_by_window = {}  # map of window id -> collections.deque([], HISTORY_SIZE)
+
+
+def plugin_loaded():
+    """The ST3 entry point for plugins."""
+    install_completion_rules()
 
 
 def pos2bytes(content, pos):
