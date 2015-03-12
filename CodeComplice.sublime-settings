@@ -55,9 +55,22 @@
        "popup" - Uses Autocomplete popup for tooltips.
        "panel" - Uses the output panel for tooltips.
        "status" - Uses the status bar for tooltips (was the default).
+       "tooltip" - Uses new-style HTML tooltips (requires ST3 Build 3070 or later).
     */
     "codeintel_tooltips": "popup",
 
+    /*
+      CSS file for "tooltip"-type tooltips
+
+      File path is relative to Packages directory. Custom styling should be
+      placed under your "User" directory.
+
+      Built-in styles:
+      "CodeComplice/css/light.css" - Style to work with light themes
+      "CodeComplice/css/dark.css" - Style to work with dark themes
+      "CodeComplice/css/default.css" - Default style
+     */
+    "codeintel_tooltip_css_file": "CodeComplice/css/light.css",
 
     /*
        "buffer" - add word completions from current view

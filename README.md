@@ -225,3 +225,6 @@ License
 The plugin is based in code from the Open Komodo Editor and has a MPL license.
 
 Ported from Open Komodo by German M. Bravo (Kronuz).
+
+Uses CSS from [Intellitip](https://github.com/jbrooksuk/Intellitip) under the
+MIT License.

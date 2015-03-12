@@ -217,6 +217,28 @@ def tooltip_popup(view, snippets):
 
     sublime.set_timeout(open_auto_complete, 0)
 
+def tooltip_tooltip(view, snippets):
+    css_file = settings_manager.get('codeintel_tooltip_css_file', default='CodeComplice/css/default.css')
+
+    try:
+        css = sublime.load_resource('Packages/{}'.format(css_file))
+    except IOError:
+        logger(view, 'warning', 'Could not find CSS file "{}", loading default'.format(css_file))
+        css = sublime.load_resource('Packages/CodeComplice/css/default.css')
+
+    output = '<style>{}</style>'.format(css.replace('\r', ''))
+
+    lines = []
+
+    for snippet in snippets:
+        lines.append(snippet[0])
+
+    output += '<h1>{}</h1>'.format(lines[0])
+    output += '<div>{}</div>'.format('<br />'.join(lines[1:]))
+
+    view.show_popup(output, max_width=600)
+
+
 def tooltip(view, calltips, text_in_current_line, original_pos, lang, caller):
     def _insert_snippet():
         # Check to see we are still at a position where the snippet is wanted:
@@ -301,6 +323,8 @@ def tooltip(view, calltips, text_in_current_line, original_pos, lang, caller):
 
     if codeintel_tooltips == 'popup':
         tooltip_popup(view, snippets)
+    elif codeintel_tooltips == 'tooltip':
+        tooltip_tooltip(view, snippets)
     elif codeintel_tooltips in ('status', 'panel'):
         if codeintel_tooltips == 'status':
             set_status(view, 'tip', text, timeout=15000)
@@ -1209,6 +1233,7 @@ class SettingsManager():
     #you can set these in your *.sublime-project file
     CORE_SETTINGS = [
         'codeintel',
+        'codeintel_tooltip_css_file',
         'codeintel_database_dir',
         'codeintel_enabled_languages',
         'codeintel_syntax_map'
