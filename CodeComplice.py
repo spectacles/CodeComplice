@@ -785,7 +785,8 @@ def codeintel_scan(view, path, content, lang, callback=None, pos=None, forms=Non
     is_dirty = view.is_dirty()
     vid = view.id()
     folders = getattr(view.window(), 'folders', lambda: [])()  # FIXME: it's like this for backward compatibility (<= 2060)
-
+    #rescan large buffers less often
+    rescan_after = (view.size()/10000)/2.5
 
     def _codeintel_scan():
         global despair, despaired
@@ -841,11 +842,7 @@ def codeintel_scan(view, path, content, lang, callback=None, pos=None, forms=Non
             if mgr.is_citadel_lang(lang):
                 now = datetime.datetime.now()
                 if not _ci_next_scan_.get(vid) or now > _ci_next_scan_[vid]:
-
-                    #rescan large buffers less often
-                    timeout = (view.size()/10000)/2.5
-
-                    _ci_next_scan_[vid] = now + datetime.timedelta(seconds=timeout)
+                    _ci_next_scan_[vid] = now + datetime.timedelta(seconds=rescan_after)
                     despair = 0
                     despaired = False
                     msg = "Updating indexes for '%s'... The first time this can take a while." % lang
