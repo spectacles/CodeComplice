@@ -600,7 +600,7 @@ class Scanner(object):
         if DEBUG:
             print "-- resolve citdl %r starting in %r" % (citdl, start_scope)
         tokens = list(self._tokenize_citdl(citdl))
-        print tokens
+        #print tokens
 
         # Find first part.
         first_token = tokens[0]
@@ -1104,7 +1104,6 @@ def main(argv=None):
     except PythonCILEError, ex:
         log.error(str(ex))
         if log.isEnabledFor(logging.DEBUG):
-            print
             import traceback
             traceback.print_exception(*sys.exc_info())
         return 1
@@ -1190,7 +1189,8 @@ def main(argv=None):
         if diff:
             print diff
     else:
-        sys.stdout.write(cix2)
+        #sys.stdout.write(cix2)
+        pass
 
 
 def _pythoncile_cix_from_path(path):
@@ -1203,7 +1203,7 @@ def _pythoncile_cix_from_path(path):
     if stderr:
         lines = [line for line in stderr.splitlines(0)
                  if "error registering" not in line]
-        print '\n'.join(lines)
+        #print '\n'.join(lines)
     return stdout
 
 if __name__ == "__main__":

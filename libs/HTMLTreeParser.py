@@ -433,7 +433,7 @@ if __name__ == "__main__":
 </body>
 </html>"""
     tree = HTML(data)
-    print ElementTree.tostring(tree)
+    #print ElementTree.tostring(tree)
     sys.exit(0)
 
     data = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
@@ -442,7 +442,7 @@ if __name__ == "__main__":
 <head>
 """
     tree = HTML(data)
-    print ElementTree.tostring(tree)
+    #print ElementTree.tostring(tree)
     sys.exit(0)
 
     data = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -651,7 +651,7 @@ function fadeTableRow(rowid, opts) {
 
 """
     tree = HTML(data)
-    print ElementTree.tostring(tree)
+    #print ElementTree.tostring(tree)
     p = Parser(HTMLTreeBuilder())
     p.feed(data)
     p.close()

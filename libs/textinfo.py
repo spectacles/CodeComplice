@@ -2011,7 +2011,6 @@ if __name__ == "__main__":
         exc_info = sys.exc_info()
         if log.isEnabledFor(logging.DEBUG):
             import traceback
-            print
             traceback.print_exception(*exc_info)
         else:
             if hasattr(exc_info[0], "__name__"):

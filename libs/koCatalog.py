@@ -637,8 +637,8 @@ if __name__ == "__main__":
         filename = sys.argv[1]
         catSvc = CatalogResolver([filename])
         ns = catSvc.getWellKnownNamspaces()
-        print ns
-        print catSvc.resolveExternalIdentifier(systemId=ns.keys()[0])
+        #print ns
+        #print catSvc.resolveExternalIdentifier(systemId=ns.keys()[0])
         ds = catSvc.getDatasetForNamespace(ns.keys()[0])
         ds.dump(sys.stdout)
     else:
@@ -685,7 +685,7 @@ if __name__ == "__main__":
         #
         catSvc.init(
             ["/Users/shanec/main/Apps/Komodo-devel/test/catalogs/test1.xml"])
-        print catSvc.getWellKnownNamspaces()
+        #print catSvc.getWellKnownNamspaces()
         # dtdFile = catSvc.resolveExternalIdentifier(publicId="-//OASIS//DTD DocBook XML V4.4//EN")
         # print "got dtd %s" % dtdFile
         # assert dtdFile == "file:///usr/share/xml/docbook44/docbookx.dtd"

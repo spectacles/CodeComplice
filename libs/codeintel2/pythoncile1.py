@@ -1773,7 +1773,6 @@ def main(argv):
     except PythonCILEError, ex:
         log.error(str(ex))
         if log.isEnabledFor(logging.DEBUG):
-            print
             import traceback
             traceback.print_exception(*sys.exc_info())
         return 1
