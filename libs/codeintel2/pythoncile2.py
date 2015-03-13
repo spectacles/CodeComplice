@@ -1049,7 +1049,8 @@ def scan(content, filename, md5sum=None, mtime=None, lang="Python"):
                 #   everything else should be linked from it.
                 for nspath, namespace in visitor.st.items():
                     if len(nspath) == 0:  # this is the module namespace
-                        pprint.pprint(namespace)
+                        #pprint.pprint(namespace)
+                        pass
             file = '    <file%s>\n\n%s\n    </file>'\
                    % (getAttrStr(fileAttrs), cix2)
             if _gClockIt:

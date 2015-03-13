@@ -1990,7 +1990,7 @@ def main(argv):
             d = ti.as_dict()
             if "text" in d:
                 del d["text"]
-            pprint(d)
+            #pprint(d)
         else:
             raise TextInfoError("unknown output format: %r" % opts.format)
 
