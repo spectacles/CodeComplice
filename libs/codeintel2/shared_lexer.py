@@ -391,5 +391,5 @@ def main(argv, provide_sample_code, specificLexer):
             last_line = tok['start_line']
         if lexer_wrapper.has_comment():
             comments = lexer_wrapper.curr_comment(1)
-            print(comments)
-        print(tok)
+            #print(comments)
+        #print(tok)

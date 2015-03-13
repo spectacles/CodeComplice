@@ -613,7 +613,7 @@ if __name__ == "__main__":
 <head>
 """
     tree = getService().getTreeForURI("Text.html", html)
-    print(tostring(tree.root))
+    #print(tostring(tree.root))
 
     html = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
@@ -665,7 +665,7 @@ if __name__ == "__main__":
 
 """
     tree = getService().getTreeForURI("Text.html", html)
-    print(tostring(tree.root))
+    #print(tostring(tree.root))
 
     html = """<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <HTML>

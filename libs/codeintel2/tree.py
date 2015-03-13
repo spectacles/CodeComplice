@@ -714,6 +714,6 @@ def _dump_element(elem, indent=''):
     This is only useful for debugging.
     """
     s = "%selement '%s': %s" % (indent, elem.tag, elem.attrib)
-    print(s)
+    #print(s)
     for child in elem:
         _dump_element(child, indent+'  ')

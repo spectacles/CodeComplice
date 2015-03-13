@@ -2209,12 +2209,13 @@ def main(argv):
             log.error("%s: %s", path, ex)
             continue
         if opts.format == "summary":
-            print(ti.as_summary())
+            #print(ti.as_summary())
+            pass
         elif opts.format == "dict":
             d = ti.as_dict()
             if "text" in d:
                 del d["text"]
-            pprint(d)
+            #pprint(d)
         else:
             raise TextInfoError("unknown output format: %r" % opts.format)
 
@@ -2234,8 +2235,6 @@ if __name__ == "__main__":
     except:
         exc_info = sys.exc_info()
         if log.isEnabledFor(logging.DEBUG):
-            import traceback
-            print()
             traceback.print_exception(*exc_info)
         else:
             if hasattr(exc_info[0], "__name__"):

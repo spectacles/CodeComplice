@@ -582,4 +582,4 @@ if __name__ == '__main__':
         print("Usage: tdparser.py filename")
     parser = PyExprParser()
     res = parser.parse_bare_arglist(file(sys.argv[1]).read())
-    print(res)
+    #print(res)
