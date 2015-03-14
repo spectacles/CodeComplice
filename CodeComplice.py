@@ -396,7 +396,7 @@ def guess_lang(view=None, path=None, sublime_scope=None):
 
     source_scopes = {
         "js": "JavaScript",
-        "go": "Go", 
+        "go": "Go",
         "json": "JSON",
         "perl": "Perl",
         "php": "PHP",
@@ -1392,7 +1392,10 @@ class SettingsManager():
             projects = list(set(projects))
         for project_file in projects:
             project_file = re.sub(r'^/([^/])/', '\\1:/', project_file)
-            project_json = json.loads(open(project_file, 'r').read(), strict=False)
+            try:
+                project_json = json.loads(open(project_file, 'r').read(), strict=False)
+            except IOError:
+                return None
             if 'folders' in project_json:
                 folders = project_json['folders']
                 found_all = True
@@ -1474,6 +1477,7 @@ class PythonCodeIntel(sublime_plugin.EventListener):
         codeintel_cleanup(view.file_name())
 
     def on_modified(self, view):
+        global is_active_popup
         view_sel = view.sel()
         sel = view_sel[0]
         pos = sel.end()
@@ -1510,7 +1514,6 @@ class PythonCodeIntel(sublime_plugin.EventListener):
         current_command = view.command_history(0)
 
         if current_command[0] not in ['insert']:
-            global is_active_popup
             is_active_popup = False
             view.run_command('hide_auto_complete')
             #show subsequent calltips instantly, if appropriate
@@ -1538,7 +1541,6 @@ class PythonCodeIntel(sublime_plugin.EventListener):
 
         if current_char in [" "]:
             #since completions are single "words", popup will close on whitespace
-            global is_active_popup
             is_active_popup = False
 
         is_fill_char = (current_char and current_char in cpln_fillup_chars.get(lang, ''))

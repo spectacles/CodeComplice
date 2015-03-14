@@ -10,7 +10,7 @@ import process
 import time
 
 try:
-    from zope.cachedescriptors.property import LazyClassAttribute
+    from zope.cachedescriptors.property import Lazy as LazyClassAttribute
 except ImportError:
     import warnings
     warnings.warn("Unable to import zope.cachedescriptors.property")
