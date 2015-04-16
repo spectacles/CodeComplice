@@ -768,7 +768,7 @@ class JavaScriptTreeEvaluator(CandidatesForTreeEvaluator):
 
         self.log("resolve '%s' type inference for %r:", citdl, elem)
 
-        if citdl == elem.get("name") and citdl not in elem.names:
+        if citdl.startswith(elem.get("name")) and citdl not in elem.names:
             # The citdl expression is the same as the variable name, this will
             # create a recursive citdl lookup loop. What we likely want is a
             # different match that has the same name, so we go looking for it.
