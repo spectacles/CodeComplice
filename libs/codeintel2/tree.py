@@ -420,17 +420,18 @@ class TreeEvaluator(CitadelEvaluator):
             kwargs:
                 "cached" (boolean) indicates if result was from cache
         """
-        log_indent = ' '*4
-        if True:    # just print as we go
-            if args:
-                s = [msg % args]
-            else:
-                s = [msg]
-            if kwargs.get("cached"):
-                s.append(" (cached)")
-            self.info('%s', ''.join(s))
-        else:       # capture log for latter printing
-            self._log.append(msg, args, kwargs)
+        pass
+        #log_indent = ' '*4
+        #if True:    # just print as we go
+        #    if args:
+        #        s = [msg % args]
+        #    else:
+        #        s = [msg]
+        #    if kwargs.get("cached"):
+        #        s.append(" (cached)")
+        #    self.info('%s', ''.join(s))
+        #else:       # capture log for latter printing
+        #    self._log.append(msg, args, kwargs)
 
     def pre_eval(self):
         self.curr_tree = self.buf.tree
