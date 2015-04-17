@@ -4090,7 +4090,7 @@ class JavaScriptCiler:
                     self._addCodePiece(self.styles, self.text, pos=0)
                     self.in_variable_definition = False
             self.lineno = start_line
-            if style != self.JS_OPERATOR:
+            if style != self.JS_OPERATOR or text in ["?:"]:
                 self.styles.append(style)
                 self.text.append(text)
             else:
