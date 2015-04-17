@@ -135,7 +135,7 @@ for logger in ('codeintel.db', 'codeintel.pythoncile'):
 for logger in ('citadel', 'css', 'django', 'html', 'html5', 'javascript', 'mason', 'nodejs',
              'perl', 'php', 'python', 'python3', 'rhtml', 'ruby', 'smarty',
              'tcl', 'templatetoolkit', 'xbl', 'xml', 'xslt', 'xul'):
-    logging.getLogger("codeintel." + logger).setLevel(logging.INFO)  # WARNING
+    logging.getLogger("codeintel." + logger).setLevel(logging.WARNING)  # WARNING
 
 
 #no live completions for these
@@ -790,11 +790,11 @@ def codeintel_manager(manager_id=None):
         mgr.initialize()
 
         # Connect the logging file to the handler
-        condeintel_log_filename = os.path.join(codeintel_database_dir, 'codeintel.log')
-        condeintel_log_file = open(condeintel_log_filename, 'w', 1)
-        codeintel_log.handlers = [logging.StreamHandler(condeintel_log_file)]
-        msg = "Starting logging SublimeCodeIntel v%s rev %s (%s) on %s" % (VERSION, get_revision()[:12], os.stat(__file__)[stat.ST_MTIME], datetime.datetime.now().ctime())
-        print("%s\n%s" % (msg, "=" * len(msg)), file=condeintel_log_file)
+        #condeintel_log_filename = os.path.join(codeintel_database_dir, 'codeintel.log')
+        #condeintel_log_file = open(condeintel_log_filename, 'w', 1)
+        #codeintel_log.handlers = [logging.StreamHandler(condeintel_log_file)]
+        #msg = "Starting logging SublimeCodeIntel v%s rev %s (%s) on %s" % (VERSION, get_revision()[:12], os.stat(__file__)[stat.ST_MTIME], datetime.datetime.now().ctime())
+        #print("%s\n%s" % (msg, "=" * len(msg)), file=condeintel_log_file)
 
         _ci_mgr_ = {}
         _ci_mgr_[manager_id] = mgr
