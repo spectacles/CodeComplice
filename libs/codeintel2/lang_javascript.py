@@ -4044,7 +4044,7 @@ class JavaScriptCiler:
             self.objectArguments = current_arguments
 
     def _pushAndSetState(self, newstate=S_DEFAULT):
-        self.state_stack.appendleft((self.state, self.bracket_depth, self.styles,
+        self.state_stack.append((self.state, self.bracket_depth, self.styles,
                                  self.text, self.lastText, self.comment,
                                  self.argumentPosition,
                                  self.argumentTextPosition,
