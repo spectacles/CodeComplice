@@ -75,7 +75,10 @@ def get_common_attrs(node):
 
 def sort_by_lines(adict):
     intermed = [(adict[k].line_num, adict[k].type, k) for k in list(adict.keys())]
-    intermed.sort()
+    try:
+        intermed.sort()
+    except TypeError:
+        pass
     return intermed
 
 
