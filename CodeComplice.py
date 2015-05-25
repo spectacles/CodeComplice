@@ -1585,7 +1585,24 @@ class PythonCodeIntel(sublime_plugin.EventListener):
         autocomplete(view, 0, settings_manager.sublime_auto_complete_delay, forms, is_fill_char, args=[path, pos, lang], kwargs={"caller":caller})
 
     def on_selection_modified(self, view):
-        pass
+        global despair, despaired, old_pos
+        delay_queue(600)  # on movement, delay queue (to make movement responsive)
+        view_sel = view.sel()
+        if not view_sel:
+            return
+        rowcol = view.rowcol(view_sel[0].end())
+        if old_pos != rowcol:
+            vid = view.id()
+            old_pos = rowcol
+            despair = 1000
+            despaired = True
+            status_lock.acquire()
+            try:
+                slns = [sid for sid, sln in status_lineno.items() if sln != rowcol[0]]
+            finally:
+                status_lock.release()
+            for vid in slns:
+                set_status(view, "", lid=vid)
 
     def on_query_completions(self, view, prefix, locations):
         vid = view.id()
