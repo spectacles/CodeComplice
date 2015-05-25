@@ -805,7 +805,7 @@ def codeintel_scan(view, path, content, lang, callback=None, pos=None, forms=Non
     global despair
     for thread in threading.enumerate():
         if thread.isAlive() and thread.name == "scanning thread":
-            logger(view, 'info', "Updating indexes... The first time this can take a while. Do not despair!", timeout=20000, delay=despair)
+            logger(view, 'info', "Could not complete last request in time!", timeout=20000, delay=despair)
             despair = 0
             return
     logger(view, 'info', "processing `%s': please wait..." % lang)
