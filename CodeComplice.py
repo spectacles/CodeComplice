@@ -413,7 +413,12 @@ def getSublimeScope(view):
     sel = view_sel[0]
     pos = sel.end()
 
-    return view.scope_name(pos)
+    try:
+        sublime_scope = view.scope_name(pos)
+        return sublime_scope
+    except Exception:
+        return []
+
 
 def guess_lang(view=None, path=None, sublime_scope=None):
     if not view or not codeintel_enabled(view):
