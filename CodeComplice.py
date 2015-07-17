@@ -132,7 +132,7 @@ codeintel_log.setLevel(logging.INFO)  # INFO
 ##create all the child-loggers for various parts of the plugin
 for logger in ('codeintel.db', 'codeintel.pythoncile'):
     logging.getLogger(logger).setLevel(logging.WARNING)  # WARNING
-for logger in ('citadel', 'css', 'django', 'html', 'html5', 'javascript', 'mason', 'nodejs',
+for logger in ('citadel', 'css', 'django', 'html', 'html5', 'javascript', 'javascript (babel)', 'mason', 'nodejs',
              'perl', 'php', 'python', 'python3', 'rhtml', 'ruby', 'smarty',
              'tcl', 'templatetoolkit', 'xbl', 'xml', 'xslt', 'xul'):
     logging.getLogger("codeintel." + logger).setLevel(logging.WARNING)  # WARNING
@@ -906,6 +906,10 @@ def codeintel_scan(view, path, content, lang, callback=None, pos=None, forms=Non
 
 def codeintel(view, path, content, lang, pos, forms, callback=None, timeout=7000, caller=None):
     start = time.time()
+
+    # JavaScript (Babel) is just JavaScript for now
+    if lang == "javascript (babel)":
+        lang = "javascript"
 
     def _codeintel(buf, msgs):
         cplns = None
