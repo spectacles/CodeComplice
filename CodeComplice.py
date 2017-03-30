@@ -77,6 +77,7 @@ import threading
 import logging
 import json
 from io import StringIO
+from glob import glob
 
 CODEINTEL_HOME_DIR = os.path.expanduser(os.path.join('~', '.codeintel'))
 __file__ = os.path.normpath(os.path.abspath(__file__))
@@ -1064,10 +1065,15 @@ def generateEnvironment(mgr, lang, folders):
     codeintel_log.debug(msg)
 
     ## scan_extra_dir
+    scan_extra_dir = []
+
     if config.get('codeintel_scan_files_in_project', True):
-        scan_extra_dir = list(folders)
-    else:
-        scan_extra_dir = []
+        excluded = config.get('codeintel_scan_exclude_dir', [])
+        for project_folder in folders:
+            folder_path = glob(project_folder + '/*/')
+            for project_path in folder_path:
+                if os.path.basename(os.path.normpath(project_path)) not in excluded:
+                    scan_extra_dir.append(project_path)
 
     scan_extra_dir.extend(config.get("codeintel_scan_extra_dir", []))
     config["codeintel_scan_extra_dir"] = scan_extra_dir
