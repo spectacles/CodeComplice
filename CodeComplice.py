@@ -233,7 +233,7 @@ def tooltip_tooltip(view, snippets):
     for snippet in snippets:
         lines.append(snippet[0])
 
-    if ')' in lines[1]:
+    if ')' in lines[1] and '(' not in lines[1]:
         output += '<h1>{}</h1>'.format(lines[0].strip() + lines[1].strip())
         output += '<div>{}</div>'.format('<br />'.join(lines[2:]))
     else:
